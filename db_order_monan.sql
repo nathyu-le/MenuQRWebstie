@@ -7,7 +7,7 @@ USE db_order_monan;
 -- 1. Bàn ăn
 CREATE TABLE ban (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    so_ban VARCHAR(20) UNIQUE NOT NULL,
+    so_ban VARCHAR(20) UNIQUE NOT NULL,           -- B01, 05, VIP01...
     trang_thai ENUM('trong', 'dang_dung', 'da_dat') DEFAULT 'trong',
     so_nguoi INT DEFAULT 0,
     thoi_gian_vao DATETIME NULL,
@@ -31,7 +31,7 @@ CREATE TABLE mon_an (
     id INT AUTO_INCREMENT PRIMARY KEY,
     ten_mon VARCHAR(150) NOT NULL,
     gia INT NOT NULL,
-    danh_muc VARCHAR(50) NOT NULL,
+    danh_muc VARCHAR(50) NOT NULL,                 -- khai_vi, mon_chinh, canh, trang_mieng, do_uong, com, pho...
     mo_ta TEXT,
     anh VARCHAR(255),
     so_lan_goi INT DEFAULT 0,
@@ -94,9 +94,9 @@ CREATE TABLE settings (
     dia_chi TEXT,
     sdt VARCHAR(20),
     logo VARCHAR(255),
-    grok_api_key VARCHAR(255),
+    grok_api_key VARCHAR(255),           -- nếu dùng Grok
     gemini_api_key VARCHAR(255),
-    intro_ai TEXT,
+    intro_ai TEXT,                       -- lời chào AI
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
