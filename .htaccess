@@ -1,0 +1,9 @@
+# Bảo mật thư mục admin và ngăn chặn truy cập không mong muốn
+<Directory "admin">
+    Order deny,allow
+    Deny from all
+</Directory>
+
+<FilesMatch "\.(env|ini|json|log|phps)$">
+    Deny from all
+</FilesMatch>
