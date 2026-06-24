@@ -149,10 +149,14 @@ function render_kitchen_cards(array $orders, string $status): void
                     <span>Đã xong</span>
                     <strong><?= count($doneOrders) ?></strong>
                 </div>
-            </div>
-            <button type="button" class="kitchen-notify-btn" onclick="enableKitchenNotice()">
+                <button type="button" class="kitchen-notify-btn" onclick="enableKitchenNotice()">
     Bật thông báo bếp
 </button>
+<!--
+<button type="button" class="kitchen-notify-btn" onclick="playKitchenSound()">
+    Test âm thanh
+</button>-->
+            </div>
         </div>
 
         <div class="kitchen-board">
@@ -196,7 +200,9 @@ function render_kitchen_cards(array $orders, string $status): void
         <p id="kitchen-toast-text">Bếp vừa nhận được order mới.</p>
     </div>
 </div>
-
+<audio id="kitchen-sound" preload="auto">
+    <source src="/assets/sounds/kitchen-new-order.mp3?v=<?= time() ?>" type="audio/mpeg">
+</audio>
 <script>
 let kitchenNoticeEnabled = localStorage.getItem('kitchen_notice_enabled') === '1';
 let kitchenLastOrderId = parseInt(localStorage.getItem('kitchen_last_order_id') || '0', 10);
@@ -216,6 +222,24 @@ function enableKitchenNotice() {
 }
 
 function playKitchenSound() {
+    const sound = document.getElementById('kitchen-sound');
+
+    if (sound) {
+        sound.pause();
+        sound.currentTime = 0;
+        sound.volume = 1.0;
+
+        sound.play().catch(function () {
+            playFallbackBeep();
+        });
+
+        return;
+    }
+
+    playFallbackBeep();
+}
+
+function playFallbackBeep() {
     try {
         const AudioContext = window.AudioContext || window.webkitAudioContext;
         const audioCtx = new AudioContext();
