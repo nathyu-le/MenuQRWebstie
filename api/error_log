@@ -1,0 +1,18 @@
+[24-Jun-2026 15:57:00 UTC] PHP Warning:  require_once(/home/tkhotrickorg/public_html/api/../../app/config/database.php): failed to open stream: No such file or directory in /home/tkhotrickorg/public_html/api/cart_add.php on line 3
+[24-Jun-2026 15:57:00 UTC] PHP Fatal error:  require_once(): Failed opening required '/home/tkhotrickorg/public_html/api/../../app/config/database.php' (include_path='.:/opt/alt/php74/usr/share/pear') in /home/tkhotrickorg/public_html/api/cart_add.php on line 3
+[24-Jun-2026 15:57:01 UTC] PHP Warning:  require_once(/home/tkhotrickorg/public_html/api/../../app/config/database.php): failed to open stream: No such file or directory in /home/tkhotrickorg/public_html/api/cart_add.php on line 3
+[24-Jun-2026 15:57:01 UTC] PHP Fatal error:  require_once(): Failed opening required '/home/tkhotrickorg/public_html/api/../../app/config/database.php' (include_path='.:/opt/alt/php74/usr/share/pear') in /home/tkhotrickorg/public_html/api/cart_add.php on line 3
+[24-Jun-2026 15:57:01 UTC] PHP Warning:  require_once(/home/tkhotrickorg/public_html/api/../../app/config/database.php): failed to open stream: No such file or directory in /home/tkhotrickorg/public_html/api/cart_add.php on line 3
+[24-Jun-2026 15:57:01 UTC] PHP Fatal error:  require_once(): Failed opening required '/home/tkhotrickorg/public_html/api/../../app/config/database.php' (include_path='.:/opt/alt/php74/usr/share/pear') in /home/tkhotrickorg/public_html/api/cart_add.php on line 3
+[24-Jun-2026 16:29:18 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function str_contains() in /home/tkhotrickorg/app/services/AiService.php:205
+Stack trace:
+#0 /home/tkhotrickorg/app/services/AiService.php(31): AiService->fallbackRecommend(Array, 'g\xE1\xBB\xA3i \xC3\xBD m\xC3\xB3n \xC4...')
+#1 /home/tkhotrickorg/public_html/api/ai_chat.php(30): AiService->chat(1, 'g\xE1\xBB\xA3i \xC3\xBD m\xC3\xB3n \xC4...')
+#2 {main}
+  thrown in /home/tkhotrickorg/app/services/AiService.php on line 205
+[24-Jun-2026 16:29:49 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function str_contains() in /home/tkhotrickorg/app/services/AiService.php:205
+Stack trace:
+#0 /home/tkhotrickorg/app/services/AiService.php(31): AiService->fallbackRecommend(Array, 'g\xE1\xBB\xA3i \xC3\xBD m\xC3\xB3n \xC4...')
+#1 /home/tkhotrickorg/public_html/api/ai_chat.php(30): AiService->chat(1, 'g\xE1\xBB\xA3i \xC3\xBD m\xC3\xB3n \xC4...')
+#2 {main}
+  thrown in /home/tkhotrickorg/app/services/AiService.php on line 205

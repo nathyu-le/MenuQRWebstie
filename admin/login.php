@@ -1,31 +1,102 @@
 <?php
-// Trang đăng nhập admin mẫu
 session_start();
+require_once __DIR__ . '/../../app/config/database.php';
+
+$error = '';
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $user = $_POST['username'] ?? '';
-    $pass = $_POST['password'] ?? '';
-    if ($user === 'admin' && $pass === 'admin') {
-        $_SESSION['admin_logged_in'] = true;
-        header('Location: dashboard.php');
+    $username = trim($_POST['username'] ?? '');
+    $password = trim($_POST['password'] ?? '');
+
+    $stmt = $pdo->prepare("SELECT * FROM admin WHERE username = ?");
+    $stmt->execute([$username]);
+    $admin = $stmt->fetch();
+
+    if ($admin && password_verify($password, $admin['password'])) {
+        $_SESSION['admin_id'] = $admin['id'];
+        $_SESSION['admin_username'] = $admin['username'];
+        $_SESSION['admin_role'] = $admin['role'];
+
+        header('Location: /admin/dashboard.php');
         exit;
+    } else {
+        $error = 'Sai username hoặc password.';
     }
-    $error = 'Đăng nhập không đúng.';
 }
 ?>
-<!doctype html>
+
+<!DOCTYPE html>
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Đăng nhập Admin</title>
+    <title>Admin Login - Foodie AI</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f5f5f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .login-box {
+            background: white;
+            padding: 30px;
+            width: 360px;
+            border-radius: 14px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.12);
+        }
+
+        .login-box h2 {
+            margin-top: 0;
+            text-align: center;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 14px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-sizing: border-box;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            background: #e74c3c;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .error {
+            color: red;
+            margin-bottom: 12px;
+            text-align: center;
+        }
+    </style>
+    <link rel="stylesheet" href="/assets/css/style.css?v=<?= time() ?>">
 </head>
 <body>
-    <h1>Đăng nhập Admin</h1>
-    <?php if (!empty($error)): ?><p><?= htmlspecialchars($error) ?></p><?php endif; ?>
-    <form method="post">
-        <label>Tên đăng nhập: <input name="username"></label><br>
-        <label>Mật khẩu: <input type="password" name="password"></label><br>
+
+<div class="login-box">
+    <h2>Foodie AI Admin</h2>
+
+    <?php if ($error): ?>
+        <div class="error"><?= htmlspecialchars($error) ?></div>
+    <?php endif; ?>
+
+    <form method="POST">
+        <input type="text" name="username" placeholder="Username" required>
+        <input type="password" name="password" placeholder="Password" required>
         <button type="submit">Đăng nhập</button>
     </form>
+</div>
+
 </body>
 </html>

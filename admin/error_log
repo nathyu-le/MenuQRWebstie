@@ -1,0 +1,55 @@
+[24-Jun-2026 15:53:32 UTC] PHP Warning:  require_once(/home/tkhotrickorg/public_html/admin/../../app/config/database.php): failed to open stream: No such file or directory in /home/tkhotrickorg/public_html/admin/login.php on line 3
+[24-Jun-2026 15:53:32 UTC] PHP Fatal error:  require_once(): Failed opening required '/home/tkhotrickorg/public_html/admin/../../app/config/database.php' (include_path='.:/opt/alt/php74/usr/share/pear') in /home/tkhotrickorg/public_html/admin/login.php on line 3
+[24-Jun-2026 16:55:26 UTC] PHP Parse error:  syntax error, unexpected '=>' (T_DOUBLE_ARROW) in /home/tkhotrickorg/public_html/admin/dashboard.php on line 89
+[24-Jun-2026 16:56:06 UTC] PHP Notice:  Undefined variable: totalOrders in /home/tkhotrickorg/public_html/admin/dashboard.php on line 144
+[24-Jun-2026 16:56:06 UTC] PHP Notice:  Undefined variable: newOrders in /home/tkhotrickorg/public_html/admin/dashboard.php on line 150
+[24-Jun-2026 16:56:06 UTC] PHP Notice:  Undefined variable: processingOrders in /home/tkhotrickorg/public_html/admin/dashboard.php on line 156
+[24-Jun-2026 16:56:06 UTC] PHP Notice:  Undefined variable: doneOrders in /home/tkhotrickorg/public_html/admin/dashboard.php on line 162
+[24-Jun-2026 16:56:06 UTC] PHP Notice:  Undefined variable: todayRevenue in /home/tkhotrickorg/public_html/admin/dashboard.php on line 168
+[24-Jun-2026 16:56:06 UTC] PHP Notice:  Undefined variable: paidRevenue in /home/tkhotrickorg/public_html/admin/dashboard.php on line 174
+[24-Jun-2026 16:56:06 UTC] PHP Notice:  Undefined variable: allowedStatus in /home/tkhotrickorg/public_html/admin/dashboard.php on line 184
+[24-Jun-2026 16:56:06 UTC] PHP Warning:  Invalid argument supplied for foreach() in /home/tkhotrickorg/public_html/admin/dashboard.php on line 184
+[24-Jun-2026 16:56:06 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function status_badge_class() in /home/tkhotrickorg/public_html/admin/dashboard.php:223
+Stack trace:
+#0 {main}
+  thrown in /home/tkhotrickorg/public_html/admin/dashboard.php on line 223
+[24-Jun-2026 16:56:23 UTC] PHP Parse error:  syntax error, unexpected '=>' (T_DOUBLE_ARROW) in /home/tkhotrickorg/public_html/admin/dashboard.php on line 96
+[24-Jun-2026 16:56:24 UTC] PHP Parse error:  syntax error, unexpected '=>' (T_DOUBLE_ARROW) in /home/tkhotrickorg/public_html/admin/dashboard.php on line 96
+[24-Jun-2026 16:56:41 UTC] PHP Parse error:  syntax error, unexpected '=>' (T_DOUBLE_ARROW) in /home/tkhotrickorg/public_html/admin/dashboard.php on line 89
+[24-Jun-2026 16:56:42 UTC] PHP Parse error:  syntax error, unexpected '=>' (T_DOUBLE_ARROW) in /home/tkhotrickorg/public_html/admin/dashboard.php on line 89
+[24-Jun-2026 17:49:17 UTC] PHP Notice:  Undefined index: ban_id in /home/tkhotrickorg/public_html/admin/dashboard.php on line 260
+[24-Jun-2026 17:49:17 UTC] PHP Notice:  Undefined index: ban_id in /home/tkhotrickorg/public_html/admin/dashboard.php on line 260
+[24-Jun-2026 17:49:17 UTC] PHP Notice:  Undefined index: ban_id in /home/tkhotrickorg/public_html/admin/dashboard.php on line 260
+[24-Jun-2026 17:49:17 UTC] PHP Notice:  Undefined index: ban_id in /home/tkhotrickorg/public_html/admin/dashboard.php on line 260
+[24-Jun-2026 17:49:30 UTC] PHP Notice:  Undefined index: ban_id in /home/tkhotrickorg/public_html/admin/dashboard.php on line 260
+[24-Jun-2026 17:49:30 UTC] PHP Notice:  Undefined index: ban_id in /home/tkhotrickorg/public_html/admin/dashboard.php on line 260
+[24-Jun-2026 17:49:30 UTC] PHP Notice:  Undefined index: ban_id in /home/tkhotrickorg/public_html/admin/dashboard.php on line 260
+[24-Jun-2026 17:49:30 UTC] PHP Notice:  Undefined index: ban_id in /home/tkhotrickorg/public_html/admin/dashboard.php on line 260
+[24-Jun-2026 17:49:33 UTC] PHP Notice:  Undefined index: ban_id in /home/tkhotrickorg/public_html/admin/dashboard.php on line 260
+[24-Jun-2026 17:49:33 UTC] PHP Notice:  Undefined index: ban_id in /home/tkhotrickorg/public_html/admin/dashboard.php on line 260
+[24-Jun-2026 17:49:33 UTC] PHP Notice:  Undefined index: ban_id in /home/tkhotrickorg/public_html/admin/dashboard.php on line 260
+[24-Jun-2026 17:49:33 UTC] PHP Notice:  Undefined index: ban_id in /home/tkhotrickorg/public_html/admin/dashboard.php on line 260
+[24-Jun-2026 17:49:37 UTC] PHP Notice:  Undefined index: ban_id in /home/tkhotrickorg/public_html/admin/dashboard.php on line 260
+[24-Jun-2026 17:49:37 UTC] PHP Notice:  Undefined index: ban_id in /home/tkhotrickorg/public_html/admin/dashboard.php on line 260
+[24-Jun-2026 17:49:37 UTC] PHP Notice:  Undefined index: ban_id in /home/tkhotrickorg/public_html/admin/dashboard.php on line 260
+[24-Jun-2026 17:49:37 UTC] PHP Notice:  Undefined index: ban_id in /home/tkhotrickorg/public_html/admin/dashboard.php on line 260
+[24-Jun-2026 17:50:06 UTC] PHP Notice:  Undefined index: ban_id in /home/tkhotrickorg/public_html/admin/dashboard.php on line 260
+[24-Jun-2026 17:50:06 UTC] PHP Notice:  Undefined index: ban_id in /home/tkhotrickorg/public_html/admin/dashboard.php on line 260
+[24-Jun-2026 17:50:06 UTC] PHP Notice:  Undefined index: ban_id in /home/tkhotrickorg/public_html/admin/dashboard.php on line 260
+[24-Jun-2026 17:50:06 UTC] PHP Notice:  Undefined index: ban_id in /home/tkhotrickorg/public_html/admin/dashboard.php on line 260
+[24-Jun-2026 17:50:13 UTC] PHP Notice:  Undefined index: ban_id in /home/tkhotrickorg/public_html/admin/dashboard.php on line 260
+[24-Jun-2026 17:50:13 UTC] PHP Notice:  Undefined index: ban_id in /home/tkhotrickorg/public_html/admin/dashboard.php on line 260
+[24-Jun-2026 17:50:13 UTC] PHP Notice:  Undefined index: ban_id in /home/tkhotrickorg/public_html/admin/dashboard.php on line 260
+[24-Jun-2026 17:50:13 UTC] PHP Notice:  Undefined index: ban_id in /home/tkhotrickorg/public_html/admin/dashboard.php on line 260
+[24-Jun-2026 17:51:39 UTC] PHP Notice:  Undefined index: ban_id in /home/tkhotrickorg/public_html/admin/dashboard.php on line 261
+[24-Jun-2026 17:51:39 UTC] PHP Notice:  Undefined index: ban_id in /home/tkhotrickorg/public_html/admin/dashboard.php on line 261
+[24-Jun-2026 17:51:39 UTC] PHP Notice:  Undefined index: ban_id in /home/tkhotrickorg/public_html/admin/dashboard.php on line 261
+[24-Jun-2026 17:51:39 UTC] PHP Notice:  Undefined index: ban_id in /home/tkhotrickorg/public_html/admin/dashboard.php on line 261
+[24-Jun-2026 17:52:35 UTC] PHP Notice:  Undefined index: ban_id in /home/tkhotrickorg/public_html/admin/dashboard.php on line 261
+[24-Jun-2026 17:52:35 UTC] PHP Notice:  Undefined index: ban_id in /home/tkhotrickorg/public_html/admin/dashboard.php on line 261
+[24-Jun-2026 17:52:35 UTC] PHP Notice:  Undefined index: ban_id in /home/tkhotrickorg/public_html/admin/dashboard.php on line 261
+[24-Jun-2026 17:52:35 UTC] PHP Notice:  Undefined index: ban_id in /home/tkhotrickorg/public_html/admin/dashboard.php on line 261
+[24-Jun-2026 17:52:50 UTC] PHP Notice:  Undefined index: ban_id in /home/tkhotrickorg/public_html/admin/dashboard.php on line 261
+[24-Jun-2026 17:52:50 UTC] PHP Notice:  Undefined index: ban_id in /home/tkhotrickorg/public_html/admin/dashboard.php on line 261
+[24-Jun-2026 17:52:50 UTC] PHP Notice:  Undefined index: ban_id in /home/tkhotrickorg/public_html/admin/dashboard.php on line 261
+[24-Jun-2026 17:52:50 UTC] PHP Notice:  Undefined index: ban_id in /home/tkhotrickorg/public_html/admin/dashboard.php on line 261
