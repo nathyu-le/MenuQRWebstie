@@ -150,6 +150,9 @@ function render_kitchen_cards(array $orders, string $status): void
                     <strong><?= count($doneOrders) ?></strong>
                 </div>
             </div>
+            <button type="button" class="kitchen-notify-btn" onclick="enableKitchenNotice()">
+    Bật thông báo bếp
+</button>
         </div>
 
         <div class="kitchen-board">
@@ -186,10 +189,150 @@ function render_kitchen_cards(array $orders, string $status): void
     </main>
 </div>
 
+<div id="kitchen-toast" class="kitchen-toast hidden">
+    <div class="kitchen-toast-icon">!</div>
+    <div>
+        <strong>Có đơn mới!</strong>
+        <p id="kitchen-toast-text">Bếp vừa nhận được order mới.</p>
+    </div>
+</div>
+
 <script>
-setTimeout(function () {
-    window.location.reload();
-}, 15000);
+let kitchenNoticeEnabled = localStorage.getItem('kitchen_notice_enabled') === '1';
+let kitchenLastOrderId = parseInt(localStorage.getItem('kitchen_last_order_id') || '0', 10);
+let kitchenFirstCheck = true;
+
+function enableKitchenNotice() {
+    kitchenNoticeEnabled = true;
+    localStorage.setItem('kitchen_notice_enabled', '1');
+
+    if ('Notification' in window && Notification.permission !== 'granted') {
+        Notification.requestPermission();
+    }
+
+    playKitchenSound();
+
+    alert('Đã bật thông báo bếp. Khi có đơn mới, màn hình sẽ báo âm thanh và hiện thông báo.');
+}
+
+function playKitchenSound() {
+    try {
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        const audioCtx = new AudioContext();
+
+        const oscillator = audioCtx.createOscillator();
+        const gainNode = audioCtx.createGain();
+
+        oscillator.type = 'sine';
+        oscillator.frequency.setValueAtTime(880, audioCtx.currentTime);
+
+        gainNode.gain.setValueAtTime(0.001, audioCtx.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.35, audioCtx.currentTime + 0.03);
+        gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.7);
+
+        oscillator.connect(gainNode);
+        gainNode.connect(audioCtx.destination);
+
+        oscillator.start();
+        oscillator.stop(audioCtx.currentTime + 0.75);
+    } catch (e) {
+        console.log('Không phát được âm thanh:', e);
+    }
+}
+
+function showKitchenToast(text) {
+    const toast = document.getElementById('kitchen-toast');
+    const toastText = document.getElementById('kitchen-toast-text');
+
+    if (!toast || !toastText) {
+        return;
+    }
+
+    toastText.innerText = text;
+    toast.classList.remove('hidden');
+
+    setTimeout(function () {
+        toast.classList.add('hidden');
+    }, 7000);
+}
+
+function showBrowserNotification(title, body) {
+    if (!('Notification' in window)) {
+        return;
+    }
+
+    if (Notification.permission === 'granted') {
+        new Notification(title, {
+            body: body,
+            icon: '/img/iconlogo.jpg'
+        });
+    }
+}
+
+function checkKitchenNewOrders() {
+    fetch('/api/kitchen_new_orders.php?after_id=' + kitchenLastOrderId + '&t=' + Date.now())
+        .then(function (res) {
+            return res.json();
+        })
+        .then(function (data) {
+            if (!data.success) {
+                console.log(data.message || 'Không kiểm tra được đơn mới.');
+                return;
+            }
+
+            /*
+            |--------------------------------------------------------------------------
+            | Lần đầu mở màn bếp: chỉ lưu ID mới nhất, không báo lại đơn cũ
+            |--------------------------------------------------------------------------
+            */
+            if (kitchenFirstCheck) {
+                kitchenFirstCheck = false;
+
+                if (kitchenLastOrderId === 0 && data.latest_id > 0) {
+                    kitchenLastOrderId = data.latest_id;
+                    localStorage.setItem('kitchen_last_order_id', String(kitchenLastOrderId));
+                }
+
+                return;
+            }
+
+            if (data.count > 0) {
+                const newest = data.orders[data.orders.length - 1];
+
+                kitchenLastOrderId = Math.max(kitchenLastOrderId, data.latest_id);
+                localStorage.setItem('kitchen_last_order_id', String(kitchenLastOrderId));
+
+                const message = 'Có ' + data.count + ' đơn mới. Mới nhất: Bàn ' + newest.so_ban + ' - ' + newest.ma_don;
+
+                showKitchenToast(message);
+
+                if (kitchenNoticeEnabled) {
+                    playKitchenSound();
+                    showBrowserNotification('Foodie AI - Có đơn mới', message);
+                }
+
+                /*
+                |--------------------------------------------------------------------------
+                | Reload nhẹ để đơn mới nhảy vào cột Đơn mới
+                |--------------------------------------------------------------------------
+                */
+                setTimeout(function () {
+                    window.location.reload();
+                }, 2500);
+            }
+        })
+        .catch(function (err) {
+            console.log('Kitchen notice error:', err);
+        });
+}
+
+/*
+|--------------------------------------------------------------------------
+| Kiểm tra đơn mới mỗi 5 giây
+|--------------------------------------------------------------------------
+*/
+checkKitchenNewOrders();
+setInterval(checkKitchenNewOrders, 5000);
 </script>
 
 </body>
