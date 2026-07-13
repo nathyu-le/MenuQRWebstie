@@ -13,7 +13,15 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 
 $id = (int) ($_POST['id'] ?? 0);
 $nextStatus = trim($_POST['trang_thai'] ?? '');
-$redirect = safe_local_redirect(trim($_POST['redirect'] ?? ''), role_home());
+$refererPath = parse_url($_SERVER['HTTP_REFERER'] ?? '', PHP_URL_PATH);
+$defaultRedirect = $refererPath === '/admin/kitchen.php' ? '/admin/kitchen.php' : role_home();
+$redirect = safe_local_redirect(trim($_POST['redirect'] ?? ''), $defaultRedirect);
+
+// Mọi thao tác xuất phát từ màn hình bếp phải ở lại màn hình bếp,
+// kể cả khi người thao tác đăng nhập bằng role owner hoặc manager.
+if ($refererPath === '/admin/kitchen.php' || trim($_POST['redirect'] ?? '') === '/admin/kitchen.php') {
+    $redirect = '/admin/kitchen.php';
+}
 $allStatuses = ['moi', 'dang_lam', 'da_xong', 'da_thanh_toan', 'huy'];
 
 if ($id <= 0 || !in_array($nextStatus, $allStatuses, true)) {

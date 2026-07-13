@@ -37,7 +37,20 @@ foreach ($orders as $order) {
 
 $restaurantName = SettingService::get($pdo, 'restaurant_name', 'Foodie AI Restaurant');
 $bankEnabled = SettingService::get($pdo, 'bank_transfer_enabled', '0') === '1';
-$bankCode = strtoupper(SettingService::get($pdo, 'bank_code', ''));
+$bankCodeInput = strtoupper(trim(SettingService::get($pdo, 'bank_code', '')));
+$bankCodeKey = preg_replace('/[^A-Z0-9]/', '', $bankCodeInput);
+$bankAliases = [
+    'MBBANK'=>'MB','MILITARYBANK'=>'MB','MB'=>'MB',
+    'VIETCOMBANK'=>'VCB','VCB'=>'VCB',
+    'TECHCOMBANK'=>'TCB','TCB'=>'TCB',
+    'VIETINBANK'=>'ICB','ICB'=>'ICB',
+    'BIDV'=>'BIDV','AGRIBANK'=>'VBA','VBA'=>'VBA',
+    'ACB'=>'ACB','VPBANK'=>'VPB','VPB'=>'VPB',
+    'TPBANK'=>'TPB','TPB'=>'TPB','SACOMBANK'=>'STB','STB'=>'STB',
+    'VIB'=>'VIB','HDBANK'=>'HDB','HDB'=>'HDB','OCB'=>'OCB',
+    'SHB'=>'SHB','SEABANK'=>'SEAB','SEAB'=>'SEAB','MSB'=>'MSB'
+];
+$bankCode = $bankAliases[$bankCodeKey] ?? $bankCodeKey;
 $bankAccount = SettingService::get($pdo, 'bank_account_number', '');
 $bankName = SettingService::get($pdo, 'bank_account_name', '');
 $transferPrefix = SettingService::get($pdo, 'bank_transfer_prefix', 'FOODIE');
@@ -75,12 +88,16 @@ $activePage = 'cashier';
         <div class="pos-checkout-layout">
             <section class="pos-bill-card">
                 <div class="pos-bill-head"><div><small>Chi tiết hóa đơn</small><h2>Bàn <?= htmlspecialchars($ban['so_ban']) ?></h2></div><button type="button" class="btn-light no-print" onclick="window.print()">In hóa đơn</button></div>
+                <div class="pos-receipt-meta"><div><span>Thời gian</span><strong><?= date('H:i · d/m/Y') ?></strong></div><div><span>Số order gộp</span><strong><?= count($orders) ?> order</strong></div><div><span>Trạng thái</span><strong>Chưa thanh toán</strong></div></div>
                 <?php if ($hasProcessingOrder): ?><div class="notice no-print">Một số món vẫn đang được bếp xử lý. Hãy kiểm tra trước khi thanh toán.</div><?php endif; ?>
+                <div class="pos-item-columns"><span>Món ăn</span><span>Thành tiền</span></div>
                 <div class="pos-item-list">
                     <?php foreach ($items as $item): ?>
                     <div class="pos-item-row"><div><strong><?= number_format((int)$item['tong_so_luong']) ?>× <?= htmlspecialchars($item['ten_mon']) ?></strong><small><?= number_format((float)$item['gia'],0,',','.') ?>đ / món</small></div><b><?= number_format((float)$item['tong_tien'],0,',','.') ?>đ</b></div>
                     <?php endforeach; ?>
                 </div>
+                <div class="pos-receipt-summary"><div><span>Tạm tính</span><strong><?= number_format($totalBill,0,',','.') ?>đ</strong></div><div><span>Phụ thu / giảm giá</span><strong>0đ</strong></div><div class="grand-total"><span>Tổng thanh toán</span><strong><?= number_format($totalBill,0,',','.') ?>đ</strong></div></div>
+                <p class="pos-receipt-thanks">Cảm ơn quý khách. Vui lòng kiểm tra hóa đơn trước khi thanh toán.</p>
                 <div class="pos-print-meta"><span><?= date('d/m/Y H:i') ?></span><span><?= htmlspecialchars($restaurantName) ?></span></div>
                 <?php if ($transferReady): ?>
                 <div class="print-transfer-receipt print-only">
@@ -145,6 +162,8 @@ $activePage = 'cashier';
             document.body.classList.toggle('print-bank-transfer', radio.value === 'chuyen_khoan');
         });
     });
+    const selectedMethod = document.querySelector('input[name="phuong_thuc"]:checked');
+    document.body.classList.toggle('print-bank-transfer', !!selectedMethod && selectedMethod.value === 'chuyen_khoan');
     const received = document.getElementById('cash-received');
     if (received) received.addEventListener('input', function () {
         const change = Math.max(0, Number(received.value || 0) - total);

@@ -1,6 +1,9 @@
 <?php
 session_start();
 
+header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
+header('Pragma: no-cache');
+
 ini_set('display_errors', '1');
 error_reporting(E_ALL);
 
@@ -90,12 +93,14 @@ function render_kitchen_cards(array $orders, string $status): void
             echo '<form method="POST" action="/admin/order_update.php">';
             echo '<input type="hidden" name="id" value="' . (int)$order['id'] . '">';
             echo '<input type="hidden" name="trang_thai" value="dang_lam">';
+            echo '<input type="hidden" name="redirect" value="/admin/kitchen.php">';
             echo '<button type="submit" class="btn kitchen-btn-start">Nhận làm</button>';
             echo '</form>';
         } elseif ($status === 'dang_lam') {
             echo '<form method="POST" action="/admin/order_update.php">';
             echo '<input type="hidden" name="id" value="' . (int)$order['id'] . '">';
             echo '<input type="hidden" name="trang_thai" value="da_xong">';
+            echo '<input type="hidden" name="redirect" value="/admin/kitchen.php">';
             echo '<button type="submit" class="btn kitchen-btn-done">Hoàn tất</button>';
             echo '</form>';
         } elseif ($status === 'da_xong' && current_admin_role() !== 'kitchen') {
@@ -205,12 +210,13 @@ function render_kitchen_cards(array $orders, string $status): void
     </div>
 </div>
 <audio id="kitchen-sound" preload="auto">
-    <source src="/assets/sounds/kitchen.mp3?v=<?= time() ?>" type="audio/mpeg">
+    <source src="/assets/sounds/kitchen.mp3?v=<?= (int) @filemtime(__DIR__ . '/../assets/sounds/kitchen.mp3') ?>" type="audio/mpeg">
 </audio>
 <script>
 let kitchenNoticeEnabled = localStorage.getItem('kitchen_notice_enabled') === '1';
 let kitchenLastOrderId = parseInt(localStorage.getItem('kitchen_last_order_id') || '0', 10);
-let kitchenFirstCheck = true;
+let kitchenFirstCheck = false;
+let kitchenStateVersion = null;
 
 function enableKitchenNotice() {
     kitchenNoticeEnabled = true;
@@ -298,7 +304,7 @@ function showBrowserNotification(title, body) {
 }
 
 function checkKitchenNewOrders() {
-    fetch('/api/kitchen_new_orders.php?after_id=' + kitchenLastOrderId + '&t=' + Date.now())
+    fetch('/api/kitchen_new_orders.php?after_id=' + kitchenLastOrderId + '&t=' + Date.now(), {cache: 'no-store'})
         .then(function (res) {
             return res.json();
         })
@@ -346,7 +352,14 @@ function checkKitchenNewOrders() {
                 */
                 setTimeout(function () {
                     window.location.reload();
-                }, 2500);
+                }, 1200);
+                return;
+            }
+
+            if (kitchenStateVersion === null) {
+                kitchenStateVersion = data.state_version || '';
+            } else if (data.state_version && data.state_version !== kitchenStateVersion) {
+                window.location.reload();
             }
         })
         .catch(function (err) {
@@ -360,7 +373,7 @@ function checkKitchenNewOrders() {
 |--------------------------------------------------------------------------
 */
 checkKitchenNewOrders();
-setInterval(checkKitchenNewOrders, 5000);
+setInterval(checkKitchenNewOrders, 3000);
 </script>
 
 </body>

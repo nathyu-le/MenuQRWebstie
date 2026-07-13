@@ -8,6 +8,7 @@ require_once __DIR__ . '/../../app/config/database.php';
 require_once __DIR__ . '/../../app/helpers/auth.php';
 
 header('Content-Type: application/json; charset=utf-8');
+header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
 
 function send_json(array $data): void
 {
@@ -52,11 +53,22 @@ try {
     $stmt->execute([$afterId]);
     $orders = $stmt->fetchAll();
 
+    $stateRows = $pdo->query("
+        SELECT trang_thai, COUNT(*) AS so_luong,
+               COALESCE(MAX(UNIX_TIMESTAMP(COALESCE(updated_at, created_at))), 0) AS lan_cap_nhat
+        FROM don_hang
+        WHERE trang_thai IN ('moi', 'dang_lam', 'da_xong')
+        GROUP BY trang_thai
+        ORDER BY trang_thai
+    ")->fetchAll();
+    $stateVersion = sha1(json_encode($stateRows));
+
     send_json([
         'success' => true,
         'latest_id' => $latestId,
         'count' => count($orders),
-        'orders' => $orders
+        'orders' => $orders,
+        'state_version' => $stateVersion
     ]);
 } catch (Throwable $e) {
     send_json([

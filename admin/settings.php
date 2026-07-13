@@ -84,7 +84,7 @@ $activePage = 'settings';
                 <div class="settings-card-head"><div><small>02</small><h3>Thanh toán chuyển khoản</h3></div><label class="switch-control"><input type="checkbox" name="bank_transfer_enabled" value="1" <?= $settings['bank_transfer_enabled'] === '1' ? 'checked' : '' ?>><span></span></label></div>
                 <p class="settings-intro">Bật để thu ngân hiển thị QR chuyển khoản đúng số tiền hóa đơn.</p>
                 <div class="settings-two-columns">
-                    <div><label>Mã ngân hàng</label><input name="bank_code" value="<?= htmlspecialchars($settings['bank_code']) ?>" placeholder="VD: MB, VCB, ACB" maxlength="20"></div>
+                    <div><label>Mã ngân hàng</label><input name="bank_code" list="bank-code-list" value="<?= htmlspecialchars($settings['bank_code']) ?>" placeholder="VD: MB, VCB, ACB" maxlength="30"><datalist id="bank-code-list"><option value="MB"><option value="VCB"><option value="TCB"><option value="BIDV"><option value="ICB"><option value="ACB"><option value="VPB"><option value="TPB"><option value="VIB"><option value="STB"></datalist></div>
                     <div><label>Số tài khoản</label><input name="bank_account_number" value="<?= htmlspecialchars($settings['bank_account_number']) ?>" inputmode="numeric" placeholder="Nhập số tài khoản" maxlength="30"></div>
                 </div>
                 <label>Tên chủ tài khoản</label>

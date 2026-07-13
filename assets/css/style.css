@@ -1996,6 +1996,11 @@ button:not(.btn-light):not(.secondary-btn) strong,
 .pos-bill-head { display:flex; align-items:flex-start; justify-content:space-between; gap:20px; padding-bottom:18px; border-bottom:1px solid #e8ece9; }
 .pos-bill-head small,.pos-total-label,.payment-section-label { color:var(--muted); font-size:10px; font-weight:600; }
 .pos-bill-head h2 { margin:4px 0 0; color:var(--primary-dark); font-size:22px; }
+.pos-receipt-meta { margin:16px 0; display:grid; grid-template-columns:repeat(3,1fr); gap:8px; }
+.pos-receipt-meta > div { padding:11px; display:flex; flex-direction:column; gap:4px; border:1px solid #e5eae7; border-radius:10px; background:#f7f9f7; }
+.pos-receipt-meta span,.pos-item-columns { color:#84908a; font-size:8px; text-transform:uppercase; letter-spacing:.045em; }
+.pos-receipt-meta strong { color:#28332e; font-size:10px; }
+.pos-item-columns { padding:8px 0; display:flex; justify-content:space-between; border-bottom:1px solid #dfe5e1; }
 .pos-item-list { margin-top:4px; }
 .pos-item-row { padding:17px 0; display:flex; justify-content:space-between; gap:20px; align-items:center; border-bottom:1px solid #e8ece9; }
 .pos-item-row div { min-width:0; display:flex; flex-direction:column; gap:5px; }
@@ -2003,6 +2008,12 @@ button:not(.btn-light):not(.secondary-btn) strong,
 .pos-item-row small { color:#89938e; font-size:9px; }
 .pos-item-row b { flex:0 0 auto; color:#102b24; font:700 13px Manrope,sans-serif; }
 .pos-print-meta { padding-top:18px; display:flex; justify-content:space-between; color:#89938e; font-size:9px; }
+.pos-receipt-summary { width:min(380px,100%); margin:20px 0 0 auto; }
+.pos-receipt-summary > div { padding:7px 0; display:flex; justify-content:space-between; gap:15px; color:#69756f; font-size:10px; }
+.pos-receipt-summary strong { color:#26332d; }
+.pos-receipt-summary .grand-total { margin-top:6px; padding-top:13px; border-top:1px solid #cfd8d3; color:#102b24; font-size:13px; font-weight:700; }
+.pos-receipt-summary .grand-total strong { color:#102b24; font:800 20px Manrope,sans-serif; }
+.pos-receipt-thanks { margin:22px 0 0; padding:12px; border-radius:10px; color:#68756e; background:#f3f6f3; font-size:9px; text-align:center; }
 .print-only { display:none; }
 .print-transfer-receipt { margin-top:22px; padding-top:18px; align-items:center; justify-content:space-between; gap:20px; border-top:1px dashed #aab4af; }
 .print-transfer-receipt > div { display:flex; flex-direction:column; gap:5px; }
@@ -2082,6 +2093,7 @@ button:not(.btn-light):not(.secondary-btn) strong,
     .report-filter-bar > *, .report-filter-bar button,.report-filter-bar .btn-light { width:100%; }
     .pos-bill-card,.pos-payment-card { padding:18px; border-radius:16px; }
     .pos-item-row { align-items:flex-start; }
+    .pos-receipt-meta { grid-template-columns:1fr; }
     .cashier-payment-metrics { grid-template-columns:1fr; }
     .section-title-row { align-items:flex-start; flex-direction:column; }
     .shift-metrics { grid-template-columns:1fr; }

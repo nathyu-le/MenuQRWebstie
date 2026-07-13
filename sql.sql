@@ -291,15 +291,18 @@ INSERT IGNORE INTO settings (setting_key, setting_value) VALUES
 
 -- =========================================================
 -- TÀI KHOẢN KHỞI TẠO
--- Mật khẩu tạm của cả bốn tài khoản: password
--- INSERT IGNORE không ghi đè tài khoản đã tồn tại.
+-- Tất cả tài khoản dùng chung hash mật khẩu do chủ quán cung cấp.
+-- Câu UPDATE bên dưới áp dụng cả tài khoản cũ đã tồn tại.
 -- Đăng nhập xong phải đổi ngay tại /admin/profile.php.
 -- =========================================================
 INSERT IGNORE INTO admin (username, password, ho_ten, role) VALUES
-('owner',   '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2uheWG/igi.', 'Chủ quán', 'owner'),
-('manager', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2uheWG/igi.', 'Quản lý', 'manager'),
-('cashier', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2uheWG/igi.', 'Thu ngân', 'cashier'),
-('kitchen', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2uheWG/igi.', 'Nhân viên bếp', 'kitchen');
+('owner',   '$2y$10$c25NVkdeIMqWdbgR4883YuE/s2CT1mCmGPm5Ma1XbUqGqM26ClTGe', 'Chủ quán', 'owner'),
+('manager', '$2y$10$c25NVkdeIMqWdbgR4883YuE/s2CT1mCmGPm5Ma1XbUqGqM26ClTGe', 'Quản lý', 'manager'),
+('cashier', '$2y$10$c25NVkdeIMqWdbgR4883YuE/s2CT1mCmGPm5Ma1XbUqGqM26ClTGe', 'Thu ngân', 'cashier'),
+('kitchen', '$2y$10$c25NVkdeIMqWdbgR4883YuE/s2CT1mCmGPm5Ma1XbUqGqM26ClTGe', 'Nhân viên bếp', 'kitchen');
+
+UPDATE admin
+SET password = '$2y$10$c25NVkdeIMqWdbgR4883YuE/s2CT1mCmGPm5Ma1XbUqGqM26ClTGe';
 
 -- =========================================================
 -- KIỂM TRA SAU KHI CHẠY
