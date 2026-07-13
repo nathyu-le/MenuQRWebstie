@@ -1,6 +1,5 @@
 <?php
-session_start();
-require_once __DIR__ . '/../../app/helpers/auth.php';
-require_admin_login();
-header('Location: ' . role_home());
+// /admin/ luôn chuyển về trang đăng nhập. Nếu đã có session,
+// login.php sẽ chuyển tiếp tới đúng workspace theo role.
+header('Location: /admin/login.php');
 exit;

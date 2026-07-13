@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Manrope:wght@600;700;800&display=swap');
+
 /* =========================================================
    FOODIE AI - LUXURY BLUE THEME
 ========================================================= */
@@ -1602,6 +1604,7 @@ textarea {
         width: 100%;
     }
 }
+
 /* =========================================================
    ROLE BASED WORKSPACE
 ========================================================= */
@@ -1698,6 +1701,10 @@ textarea {
 .shift-card > p { color: #718079; font-size: 12px; }
 .shift-opening { margin: 15px 0 20px; padding: 15px; display: flex; justify-content: space-between; border-radius: 12px; color: #5e6c65; background: #edf2ef; }
 .shift-opening strong { color: #173f35; }
+.shift-identity { margin: 14px 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.shift-identity > div { padding: 12px; display: flex; flex-direction: column; border: 1px solid #dfe7e2; border-radius: 10px; background: #f7f9f7; }
+.shift-identity span, .field-help { color: #7b8982; font-size: 9px; }
+.shift-identity strong { color: #173f35; font-size: 11px; }
 .cashbook-grid { display: grid; gap: 18px; }
 .ledger-type { padding: 5px 8px; border-radius: 999px; font-size: 9px; font-weight: 800; }
 .ledger-type.income { color: #246548; background: #e2f1e8; }
@@ -1705,6 +1712,7 @@ textarea {
 .ledger-method { margin-top: 3px; display: block; color: #829089; font-size: 9px; text-transform: capitalize; }
 .money { white-space: nowrap; font-weight: 800; }
 .invoice-actions form select { min-width: 150px; margin-bottom: 8px; }
+.profile-form { max-width: 520px; margin: 0; }
 
 @media (max-width: 1100px) {
     .cashier-table-grid { grid-template-columns: repeat(3, 1fr); }
@@ -1712,10 +1720,204 @@ textarea {
     .cashbook-metrics { grid-template-columns: repeat(2, 1fr); }
 }
 
+/* =========================================================
+   UNIFIED PREMIUM THEME — LANDING DESIGN SYSTEM
+========================================================= */
+:root {
+    --primary: #173f35;
+    --primary-dark: #102b24;
+    --primary-light: #e7eee9;
+    --secondary: #102b24;
+    --accent: #b58a52;
+    --bg: #f7f5f0;
+    --bg-soft: #fbfaf7;
+    --white: #fffefd;
+    --text: #171916;
+    --muted: #68736d;
+    --border: #dde3df;
+    --success: #2f7d5b;
+    --warning: #c48737;
+    --danger: #b84a45;
+    --shadow: 0 18px 50px rgba(16, 43, 36, .08);
+    --radius: 18px;
+}
+
+html { background: var(--bg); }
+body {
+    font-family: "Be Vietnam Pro", "Segoe UI", sans-serif;
+    background:
+        radial-gradient(circle at 90% -10%, rgba(181,138,82,.09), transparent 30%),
+        var(--bg);
+    color: var(--text);
+}
+h1, h2, h3, h4, .metric-value { font-family: Manrope, "Be Vietnam Pro", sans-serif; letter-spacing: -.025em; }
+a { color: var(--primary); }
+a:hover { color: #245b4c; }
+
+button, .btn, .primary-btn {
+    min-height: 44px;
+    padding: 11px 17px;
+    border-radius: 12px;
+    color: #fff;
+    background: var(--primary);
+    box-shadow: 0 9px 24px rgba(23,63,53,.13);
+    font-family: "Be Vietnam Pro", sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+}
+button:hover, .btn:hover, .primary-btn:hover { color:#fff; background:#245b4c; box-shadow:0 13px 30px rgba(23,63,53,.19); }
+.btn-light { min-height: 42px; padding:10px 15px; display:inline-flex; align-items:center; justify-content:center; border:1px solid var(--border); border-radius:12px; color:var(--primary); background:#fff; font-size:12px; font-weight:700; }
+.btn-light:hover { color:var(--primary-dark); border-color:#b8c8bf; background:#f2f6f3; }
+.danger { background: var(--danger) !important; }
+
+input, select, textarea {
+    min-height: 46px;
+    padding: 11px 13px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    color: var(--text);
+    background: #fff;
+    font-family: "Be Vietnam Pro", sans-serif;
+    font-size: 13px;
+}
+textarea { min-height: 100px; }
+input:focus, select:focus, textarea:focus { border-color:#7fa091; box-shadow:0 0 0 4px rgba(23,63,53,.08); }
+label { margin: 13px 0 6px; display:block; color:#435049; font-size:12px; font-weight:600; }
+
+.admin-layout { min-height:100vh; align-items:stretch; background:transparent; }
+.admin-sidebar { width:270px; padding:26px 19px; background:var(--primary-dark); }
+.role-sidebar { position:sticky; top:0; height:100vh; overflow-y:auto; border-right:1px solid rgba(255,255,255,.06); }
+.role-sidebar .sidebar-brand { font-family:Manrope,sans-serif; letter-spacing:-.04em; }
+.role-sidebar nav a { margin:0; border-radius:10px; }
+.role-sidebar .sidebar-logout { margin-top:24px; }
+.admin-content { min-width:0; max-width:1600px; padding:34px clamp(24px,3vw,48px) 60px; }
+.admin-content h1 { color:var(--primary-dark); font-size:clamp(27px,3vw,38px); }
+
+.form-card, .metric-card, .chart-card, .table-card, .empty-box, .invoice-box {
+    border:1px solid var(--border);
+    border-radius:20px;
+    background:rgba(255,254,253,.94);
+    box-shadow:var(--shadow);
+}
+.form-card, .table-card, .chart-card { padding:22px; }
+.form-card h3, .table-card h3, .chart-card h3 { color:var(--primary-dark); font-size:17px; }
+.form-card button { margin-top:12px; }
+.metric-card { position:relative; overflow:hidden; padding:21px; }
+.metric-card::before { content:""; position:absolute; width:64px; height:64px; right:-30px; top:-30px; border:16px solid rgba(181,138,82,.08); border-radius:50%; }
+.metric-card .metric-label { color:var(--muted); font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:.045em; }
+.metric-card .metric-value { color:var(--primary-dark); font-size:clamp(24px,2.4vw,34px); }
+.metric-card .metric-sub { color:#7b8580; font-size:11px; }
+
+.table-card { overflow-x:auto; }
+.table { min-width:680px; overflow:hidden; border-collapse:separate; border-spacing:0; border:0; }
+.table th { padding:13px 14px; border:0; border-bottom:1px solid var(--border); color:#435149; background:#eef2ef; font-size:10px; letter-spacing:.05em; text-transform:uppercase; }
+.table td { padding:14px; border:0; border-bottom:1px solid #edf0ee; color:#4e5953; font-size:12px; }
+.table tr:nth-child(even) { background:#fbfcfa; }
+.table tr:hover td { background:#f3f6f3; }
+.table tr:last-child td { border-bottom:0; }
+
+.status-badge { padding:6px 10px; font-size:9px; letter-spacing:.035em; text-transform:uppercase; }
+.status-moi { color:#855e25; background:#f8ead3; }
+.status-dang_lam,.status-dang_phuc_vu { color:#25587a; background:#e0edf5; }
+.status-da_xong,.status-da_thanh_toan { color:#246548; background:#e2f1e8; }
+.status-huy { color:#963c38; background:#f7e2e0; }
+
+.charts-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
+.chart-canvas-wrap { min-height:290px; }
+.notice { border:1px solid #ead7b9; border-radius:13px; color:#72532d; background:#fcf4e7; }
+.role-page-kicker { color:#9a7040; }
+.role-alert { border-radius:13px; }
+
+.kitchen-header-bar { padding-bottom:24px; align-items:flex-start; border-bottom:1px solid var(--border); }
+.kitchen-header-bar h1 { color:var(--primary-dark); }
+.kitchen-summary { gap:9px; }
+.kitchen-mini-stat { min-width:96px; padding:12px; border:1px solid var(--border); border-radius:13px; background:#fff; }
+.kitchen-mini-stat strong { color:var(--primary-dark); }
+.kitchen-board { gap:14px; }
+.kitchen-column { border:1px solid var(--border); border-radius:17px; background:#edf1ee; box-shadow:none; }
+.kitchen-column-head { border-radius:16px 16px 0 0; color:var(--primary-dark); background:#e5ebe7; }
+.kitchen-head-new { background:#f5e7d1; }.kitchen-head-cooking { background:#dfeaf1; }.kitchen-head-done { background:#dcece3; }
+.kitchen-order-card { border:1px solid #e0e6e2; border-radius:14px; box-shadow:0 8px 24px rgba(16,43,36,.06); }
+.kitchen-table { color:var(--primary-dark); }
+.kitchen-btn-start { background:#9e713b; }.kitchen-btn-done { background:#2f7d5b; }
+.kitchen-notify-btn { background:var(--primary); }
+.kitchen-toast { border:1px solid var(--border); border-radius:17px; }
+.kitchen-toast-icon { color:var(--primary); background:var(--primary-light); }
+
+.invoice-box { max-width:980px; padding:30px; }
+.invoice-header { border-color:var(--border); }
+.invoice-table-number, .invoice-total { color:#fff; background:var(--primary-dark); }
+.invoice-info-grid > div, .success-info-item { border:1px solid var(--border); background:#f5f7f4; }
+.success-page, .auth-page { background:radial-gradient(circle at top right,rgba(181,138,82,.14),transparent 32%),var(--bg); }
+.success-card, .success-box, .auth-box { border-color:var(--border); background:#fff; box-shadow:0 30px 80px rgba(16,43,36,.14); }
+.success-card::before { background:var(--primary); }
+.success-icon { color:#fff; background:var(--primary); box-shadow:0 12px 30px rgba(23,63,53,.2); }
+.success-label { color:#8a673d; background:#f3e7d6; }
+
+body:has(.login-box) { min-height:100vh; padding:24px; background:radial-gradient(circle at 80% 0,rgba(181,138,82,.16),transparent 30%),var(--bg); }
+.login-box { width:min(440px,100%); padding:42px !important; border:1px solid var(--border); border-radius:24px !important; background:#fff; box-shadow:0 30px 85px rgba(16,43,36,.16) !important; }
+.login-box h2 { margin-bottom:25px !important; color:var(--primary-dark); font:800 28px Manrope,sans-serif; }
+.login-box input { margin-bottom:12px; }
+.login-box button { width:100%; background:var(--primary); }
+.login-box .error { padding:10px; border-radius:10px; color:#9d3d38; background:#fae9e7; font-size:12px; }
+.login-page { min-height:100vh; margin:0; display:grid; place-items:center; padding:30px; }
+.login-shell { width:min(1040px,100%); min-height:610px; display:grid; grid-template-columns:1.12fr .88fr; overflow:hidden; border:1px solid rgba(23,63,53,.12); border-radius:28px; background:#fff; box-shadow:0 35px 100px rgba(16,43,36,.18); }
+.login-story { padding:54px; display:flex; flex-direction:column; justify-content:space-between; color:#fff; background:radial-gradient(circle at 90% 10%,rgba(181,138,82,.34),transparent 31%),linear-gradient(145deg,#102b24,#173f35); }
+.login-brand { display:flex; align-items:center; gap:9px; color:#fff; font:800 20px Manrope,sans-serif; }.login-brand:hover{color:#fff}.login-brand b,.login-mobile-brand b{color:#d9ba8b}.login-brand>span{width:37px;height:37px;display:grid;place-items:center;border:1px solid rgba(255,255,255,.2);border-radius:11px;background:rgba(255,255,255,.08)}
+.login-story .role-page-kicker { color:#d9ba8b; }.login-story h1{margin:12px 0 20px;font-size:clamp(38px,4vw,58px);line-height:1.08;color:#fff}.login-story>div>p:last-child{max-width:520px;color:rgba(255,255,255,.62);font-size:14px}.login-role-list{display:flex;gap:8px;flex-wrap:wrap}.login-role-list span{padding:7px 11px;border:1px solid rgba(255,255,255,.13);border-radius:999px;color:rgba(255,255,255,.72);background:rgba(255,255,255,.06);font-size:10px}
+.login-shell .login-box { width:auto; padding:54px 46px !important; display:flex; flex-direction:column; justify-content:center; border:0; border-radius:0 !important; box-shadow:none !important; }
+.login-shell .login-box h2 { margin:7px 0 8px !important; text-align:left; }.login-help{margin:0 0 22px;color:var(--muted);font-size:12px}.login-shell .login-box button{margin-top:10px}.login-back{margin-top:22px;color:#718079;font-size:11px;text-align:center}.login-mobile-brand{display:none;margin-bottom:25px;color:#102b24;font:800 20px Manrope,sans-serif}
+.ai-history-table td { vertical-align:top; }.ai-history-table th:nth-child(2){min-width:220px}.ai-history-table th:nth-child(3){min-width:340px}.ai-response-cell{max-height:150px;overflow:auto;white-space:normal;line-height:1.6}
+
+.popup { background:rgba(9,25,20,.62); backdrop-filter:blur(7px); }
+.popup-content { border-color:var(--border); border-radius:20px; box-shadow:0 30px 90px rgba(10,31,24,.25); }
+
+@media (max-width:1200px) {
+    .metrics-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
+    .kitchen-board { grid-template-columns:repeat(2,minmax(0,1fr)); }
+    .kitchen-column:last-child { grid-column:1/-1; }
+}
+
+@media (max-width:900px) {
+    .admin-layout { display:block; }
+    .role-sidebar { position:relative; width:100%; height:auto; padding:15px 16px; overflow:visible; }
+    .role-sidebar .sidebar-brand { margin:0 0 12px; font-size:19px; }
+    .role-sidebar .sidebar-user { margin-bottom:12px; padding:9px; }
+    .role-sidebar nav { padding-bottom:4px; display:flex; gap:6px; overflow-x:auto; scrollbar-width:thin; }
+    .role-sidebar nav a { flex:0 0 auto; padding:9px 12px; white-space:nowrap; }
+    .role-sidebar .sidebar-logout { margin:10px 0 0; padding:9px 12px; border:0; }
+    .admin-content { padding:26px 18px 50px; }
+    .charts-grid { grid-template-columns:1fr; }
+    .kitchen-board { grid-template-columns:1fr; }
+    .kitchen-column:last-child { grid-column:auto; }
+    .kitchen-header-bar { flex-direction:column; gap:18px; }
+    .login-page { padding:18px; }
+    .login-shell { max-width:500px; min-height:0; grid-template-columns:1fr; }
+    .login-story { display:none; }
+    .login-mobile-brand { display:block; }
+}
+
+@media (max-width:600px) {
+    .admin-content { padding:22px 13px 42px; }
+    .admin-content h1 { font-size:27px; }
+    .metrics-grid, .cashier-metrics, .owner-metric-grid, .cashbook-metrics { grid-template-columns:1fr; gap:11px; }
+    .form-card,.table-card,.chart-card { padding:16px; border-radius:16px; }
+    .metric-card { padding:17px; }
+    .role-page-header { margin-bottom:20px; }
+    .kitchen-summary { width:100%; display:grid; grid-template-columns:repeat(3,1fr); }
+    .kitchen-mini-stat { min-width:0; padding:9px; }
+    .kitchen-notify-btn { grid-column:1/-1; }
+    .invoice-box { padding:18px; border-radius:16px; }
+    .invoice-info-grid,.success-info-grid { grid-template-columns:1fr; }
+    .invoice-actions,.success-actions { flex-direction:column; }
+    .invoice-actions > *, .success-actions a { width:100%; }
+    .login-box { padding:28px 22px !important; }
+}
+
 @media (max-width: 760px) {
     .cashier-metrics, .cashier-table-grid { grid-template-columns: 1fr; }
     .users-layout { grid-template-columns: 1fr; }
     .owner-metric-grid, .owner-quick-grid { grid-template-columns: 1fr; }
-    .cashbook-metrics, .cashbook-actions { grid-template-columns: 1fr; }
+    .cashbook-metrics, .cashbook-actions, .shift-identity { grid-template-columns: 1fr; }
     .role-page-header { align-items: flex-start; flex-direction: column; }
 }

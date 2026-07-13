@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Manrope:wght@600;700;800&display=swap');
+
 /* =========================================================
    FOODIE AI CART - PREMIUM CUSTOMER CART UI
 ========================================================= */
@@ -691,4 +693,53 @@ button {
         display: block;
         margin-top: 8px;
     }
+}
+
+/* =========================================================
+   UNIFIED PREMIUM THEME — CUSTOMER CART
+========================================================= */
+:root {
+    --blue-950:#102b24; --blue-900:#173f35; --blue-800:#245b4c; --blue-700:#2b6655; --blue-600:#367b67;
+    --blue-100:#e5eee9; --blue-50:#f1f5f2; --slate-950:#171916; --slate-900:#1c211e;
+    --slate-700:#455149; --slate-600:#58645d; --slate-500:#728079; --slate-300:#c8d0cb;
+    --slate-200:#dfe4e1; --slate-100:#edf1ee; --slate-50:#f7f8f6; --line:#dde3df;
+    --danger:#b84a45; --danger-soft:#f7e5e3; --success:#2f7d5b;
+    --shadow-soft:0 16px 45px rgba(16,43,36,.08); --shadow-card:0 20px 55px rgba(16,43,36,.11);
+}
+body.cart-page { font-family:"Be Vietnam Pro",sans-serif; background:radial-gradient(circle at 90% 0,rgba(181,138,82,.1),transparent 30%),#f7f5f0; color:#171916; }
+h1,h2,h3,.summary-total strong,.line-total { font-family:Manrope,"Be Vietnam Pro",sans-serif; }
+.cart-navbar { border-color:rgba(23,63,53,.1); background:rgba(247,245,240,.9); }
+.brand-mark { background:#173f35; box-shadow:0 12px 30px rgba(23,63,53,.18); }
+.brand-text h1 { color:#102b24; }
+.nav-link,.table-pill { border-color:#d8e0db; color:#455149; background:#fff; }
+.nav-link:hover { color:#173f35; background:#edf3ef; }
+.table-pill { border-color:#173f35; color:#fff; background:#173f35; }
+.cart-main { max-width:1200px; }
+.cart-hero { border:1px solid rgba(217,186,139,.18); background:radial-gradient(circle at 85% 10%,rgba(181,138,82,.3),transparent 30%),linear-gradient(135deg,#102b24,#1b4b3e); box-shadow:0 30px 80px rgba(16,43,36,.19); }
+.cart-hero-label { color:#ecd4b1; border-color:rgba(217,186,139,.25); background:rgba(181,138,82,.13); }
+.cart-panel,.summary-panel,.empty-panel { border-color:#dde3df; border-radius:22px; background:#fffefd; box-shadow:var(--shadow-soft); }
+.panel-head { border-color:#dde3df; background:#f2f5f2; }
+.cart-item { border-color:#e5e9e6; }
+.cart-thumb { background:#e9ede9; }
+.item-title,.summary-panel h3 { color:#102b24; }
+.qty-control button,.remove-btn { border-color:#dce3df; color:#173f35; background:#f3f6f3; }
+.qty-control button:hover { background:#e4ece7; }
+.summary-total { border-color:#d9e1dc; color:#fff; background:#102b24; }
+.summary-actions .primary-btn,.popup-content button:first-of-type { background:#173f35; }
+.popup { background:rgba(8,24,19,.63); backdrop-filter:blur(8px); }
+.popup-content { border-color:#dde3df; background:#fffefd; box-shadow:0 30px 90px rgba(10,31,24,.25); }
+.popup-content h3 { color:#102b24; }
+
+@media (max-width:760px) {
+    .cart-navbar-inner { padding:14px; }
+    .cart-nav-actions { grid-template-columns:1fr 1fr; }
+    .table-pill { grid-column:1/-1; }
+    .cart-hero { border-radius:22px; }
+}
+@media (max-width:480px) {
+    .brand-text p { display:none; }
+    .brand-text h1 { max-width:220px; font-size:16px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .cart-nav-actions { grid-template-columns:1fr; }
+    .table-pill { grid-column:auto; }
+    .cart-item { padding:14px; }
 }

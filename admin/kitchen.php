@@ -204,7 +204,7 @@ function render_kitchen_cards(array $orders, string $status): void
     </div>
 </div>
 <audio id="kitchen-sound" preload="auto">
-    <source src="/assets/sounds/kitchen-new-order.mp3?v=<?= time() ?>" type="audio/mpeg">
+    <source src="/assets/sounds/kitchen.mp3?v=<?= time() ?>" type="audio/mpeg">
 </audio>
 <script>
 let kitchenNoticeEnabled = localStorage.getItem('kitchen_notice_enabled') === '1';

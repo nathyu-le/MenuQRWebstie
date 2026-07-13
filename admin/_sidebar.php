@@ -33,6 +33,7 @@ if ($role === 'owner') {
     $nav[] = ['chat', '/admin/chat_history.php', 'Lịch sử AI'];
     $nav[] = ['settings', '/admin/settings.php', 'Cài đặt hệ thống'];
 }
+$nav[] = ['profile', '/admin/profile.php', 'Đổi mật khẩu'];
 ?>
 <aside class="admin-sidebar role-sidebar">
     <div class="sidebar-brand">Foodie <b>AI</b></div>

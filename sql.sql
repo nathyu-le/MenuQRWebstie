@@ -63,6 +63,8 @@ ALTER TABLE admin
 CREATE TABLE IF NOT EXISTS ca_thu_ngan (
     id INT AUTO_INCREMENT PRIMARY KEY,
     opened_by INT NOT NULL,
+    ten_nhan_vien VARCHAR(150) NOT NULL,
+    ca_lam ENUM('sang', 'chieu', 'toi') NOT NULL,
     opening_cash DECIMAL(12,2) NOT NULL DEFAULT 0,
     opened_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     closed_by INT NULL,
@@ -77,6 +79,33 @@ CREATE TABLE IF NOT EXISTS ca_thu_ngan (
     CONSTRAINT fk_ca_closed_by
         FOREIGN KEY (closed_by) REFERENCES admin(id) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Bổ sung hai cột trên nếu đây là database đã chạy phiên bản cũ.
+SET @has_shift_employee = (
+    SELECT COUNT(*) FROM information_schema.COLUMNS
+    WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'ca_thu_ngan' AND COLUMN_NAME = 'ten_nhan_vien'
+);
+SET @shift_employee_sql = IF(
+    @has_shift_employee = 0,
+    'ALTER TABLE ca_thu_ngan ADD COLUMN ten_nhan_vien VARCHAR(150) NULL AFTER opened_by',
+    'SELECT 1'
+);
+PREPARE shift_employee_stmt FROM @shift_employee_sql;
+EXECUTE shift_employee_stmt;
+DEALLOCATE PREPARE shift_employee_stmt;
+
+SET @has_shift_period = (
+    SELECT COUNT(*) FROM information_schema.COLUMNS
+    WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'ca_thu_ngan' AND COLUMN_NAME = 'ca_lam'
+);
+SET @shift_period_sql = IF(
+    @has_shift_period = 0,
+    'ALTER TABLE ca_thu_ngan ADD COLUMN ca_lam ENUM(''sang'',''chieu'',''toi'') NULL AFTER ten_nhan_vien',
+    'SELECT 1'
+);
+PREPARE shift_period_stmt FROM @shift_period_sql;
+EXECUTE shift_period_stmt;
+DEALLOCATE PREPARE shift_period_stmt;
 
 -- =========================================================
 -- GIAO DỊCH THU/CHI THỦ CÔNG
@@ -223,15 +252,16 @@ CREATE TABLE IF NOT EXISTS settings (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- =========================================================
--- TÀI KHOẢN CHỦ QUÁN ĐẦU TIÊN
+-- TÀI KHOẢN KHỞI TẠO
+-- Mật khẩu tạm của cả bốn tài khoản: password
+-- INSERT IGNORE không ghi đè tài khoản đã tồn tại.
+-- Đăng nhập xong phải đổi ngay tại /admin/profile.php.
 -- =========================================================
--- Nếu database mới chưa có tài khoản, hãy:
---   1. Mở create_admin_hash.php để tạo password hash.
---   2. Thay HASH_MAT_KHAU bên dưới bằng hash vừa tạo.
---   3. Bỏ dấu -- ở câu INSERT rồi chạy riêng câu đó.
---
--- INSERT INTO admin (username, password, ho_ten, role)
--- VALUES ('owner', 'HASH_MAT_KHAU', 'Chủ quán', 'owner');
+INSERT IGNORE INTO admin (username, password, ho_ten, role) VALUES
+('owner',   '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2uheWG/igi.', 'Chủ quán', 'owner'),
+('manager', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2uheWG/igi.', 'Quản lý', 'manager'),
+('cashier', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2uheWG/igi.', 'Thu ngân', 'cashier'),
+('kitchen', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2uheWG/igi.', 'Nhân viên bếp', 'kitchen');
 
 -- =========================================================
 -- KIỂM TRA SAU KHI CHẠY

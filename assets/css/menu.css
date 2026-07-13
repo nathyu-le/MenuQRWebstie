@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Manrope:wght@600;700;800&display=swap');
+
 /* =========================================================
    FOODIE AI CUSTOMER MENU - PREMIUM RESTAURANT UI
    Theme: Coastal luxury / white / ocean blue / clean
@@ -1015,4 +1017,60 @@ button {
         height: 48px;
         border-radius: 16px;
     }
+}
+
+/* =========================================================
+   UNIFIED PREMIUM THEME — CUSTOMER MENU
+========================================================= */
+:root {
+    --blue-900:#102b24; --blue-800:#173f35; --blue-700:#245b4c;
+    --blue-600:#2f725f; --blue-500:#b58a52; --blue-100:#e5eee9; --blue-50:#f1f5f2;
+    --slate-950:#171916; --slate-900:#1c211e; --slate-700:#455149; --slate-600:#58645d;
+    --slate-500:#728079; --slate-300:#c8d0cb; --slate-200:#dfe4e1; --slate-100:#edf1ee; --slate-50:#f7f8f6;
+    --cream:#f7f5f0; --line:#dde3df; --success:#2f7d5b; --warning:#c48737; --danger:#b84a45;
+    --shadow-soft:0 16px 45px rgba(16,43,36,.08); --shadow-card:0 12px 35px rgba(16,43,36,.08); --shadow-float:0 30px 80px rgba(16,43,36,.17);
+}
+body.menu-page { font-family:"Be Vietnam Pro",sans-serif; background:radial-gradient(circle at 90% 0,rgba(181,138,82,.1),transparent 28%),#f7f5f0; color:#171916; }
+h1,h2,h3,.food-price { font-family:Manrope,"Be Vietnam Pro",sans-serif; }
+.menu-navbar { border-color:rgba(23,63,53,.1); background:rgba(247,245,240,.9); }
+.menu-navbar-inner { max-width:1240px; }
+.brand-logo { border-color:#d6ded9; border-radius:15px; box-shadow:0 10px 28px rgba(16,43,36,.1); }
+.brand-text h1 { color:#102b24; font-family:Manrope,sans-serif; }
+.nav-link,.table-pill,.icon-btn { border-color:#d8e0db; color:#455149; background:#fff; }
+.nav-link:hover,.table-pill:hover,.icon-btn:hover { border-color:#9db3a8; color:#173f35; background:#edf3ef; }
+.table-pill { border-color:#173f35; color:#fff; background:#173f35; }
+.menu-main { max-width:1240px; padding-top:34px; }
+.hero-panel { border:1px solid rgba(217,186,139,.18); background:radial-gradient(circle at 85% 10%,rgba(181,138,82,.32),transparent 30%),linear-gradient(135deg,#102b24,#1b4b3e); box-shadow:0 32px 80px rgba(16,43,36,.2); }
+.hero-eyebrow { color:#ecd4b1; border-color:rgba(217,186,139,.25); background:rgba(181,138,82,.13); }
+.hero-panel h2 { font-family:Manrope,sans-serif; letter-spacing:-.045em; }
+.hero-stat-card,.toolbar,.category-strip,.food-card-pro,.menu-side-panel { border-color:#dde3df; background:#fffefd; box-shadow:var(--shadow-soft); }
+.hero-stat-card strong,.section-heading h2,.food-card-pro h3 { color:#102b24; }
+.toolbar input,.toolbar select { border-color:#dde3df; }
+.category-chip.active,.primary-cta,.food-actions button { border-color:#173f35; color:#fff; background:#173f35; }
+.category-chip:hover { border-color:#9db3a8; color:#173f35; background:#edf3ef; }
+.food-card-pro { border-radius:20px; }
+.food-card-pro:hover { border-color:#b9c8c0; box-shadow:0 20px 50px rgba(16,43,36,.13); }
+.food-photo { background:#e9ede9; }
+.food-price { color:#173f35; }
+.food-badge { color:#513b22; background:#d9ba8b; }
+.popup { background:rgba(8,24,19,.63); backdrop-filter:blur(8px); }
+.popup-content { border-color:#dde3df; background:#fffefd; box-shadow:0 30px 90px rgba(10,31,24,.25); }
+.popup-content h3 { color:#102b24; }
+#foodie-chatbot button,.chat-input button,.ai-set-box button { background:#173f35 !important; }
+
+@media (max-width:820px) {
+    .menu-navbar-inner { padding:14px; }
+    .menu-nav-actions { grid-template-columns:1fr 1fr; }
+    .table-pill { grid-column:1/-1; }
+    .menu-hero { gap:14px; }
+    .hero-panel { border-radius:22px; }
+}
+@media (max-width:480px) {
+    .brand-text p { display:none; }
+    .brand-text h1 { max-width:210px; overflow:hidden; font-size:16px; text-overflow:ellipsis; white-space:nowrap; }
+    .menu-nav-actions { grid-template-columns:1fr; }
+    .table-pill { grid-column:auto; }
+    .hero-panel { padding:24px 18px; }
+    .hero-panel h2 { font-size:28px; }
+    .food-grid { gap:14px; }
 }

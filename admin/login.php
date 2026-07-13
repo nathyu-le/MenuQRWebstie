@@ -37,74 +37,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <title>Admin Login - Foodie AI</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #f5f5f5;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-        }
-
-        .login-box {
-            background: white;
-            padding: 30px;
-            width: 360px;
-            border-radius: 14px;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.12);
-        }
-
-        .login-box h2 {
-            margin-top: 0;
-            text-align: center;
-        }
-
-        input {
-            width: 100%;
-            padding: 12px;
-            margin-bottom: 14px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            box-sizing: border-box;
-        }
-
-        button {
-            width: 100%;
-            padding: 12px;
-            border: none;
-            border-radius: 8px;
-            background: #e74c3c;
-            color: white;
-            font-weight: bold;
-            cursor: pointer;
-        }
-
-        .error {
-            color: red;
-            margin-bottom: 12px;
-            text-align: center;
-        }
-    </style>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Đăng nhập vận hành - Foodie AI</title>
     <link rel="stylesheet" href="/assets/css/style.css?v=<?= time() ?>">
 </head>
-<body>
-
-<div class="login-box">
-    <h2>Foodie AI Admin</h2>
-
-    <?php if ($error): ?>
-        <div class="error"><?= htmlspecialchars($error) ?></div>
-    <?php endif; ?>
-
-    <form method="POST">
-        <input type="text" name="username" placeholder="Username" required>
-        <input type="password" name="password" placeholder="Password" required>
-        <button type="submit">Đăng nhập</button>
-    </form>
-</div>
-
+<body class="login-page">
+<main class="login-shell">
+    <section class="login-story">
+        <a class="login-brand" href="/"><span>F</span>Foodie <b>AI</b></a>
+        <div><p class="role-page-kicker">Workspace dành cho F&amp;B</p><h1>Mỗi vai trò,<br>một nhịp vận hành.</h1><p>Bếp, thu ngân, quản lý và chủ quán đăng nhập chung một nơi — hệ thống tự đưa từng người đến đúng màn hình làm việc.</p></div>
+        <div class="login-role-list"><span>Bếp</span><span>Thu ngân</span><span>Quản lý</span><span>Chủ quán</span></div>
+    </section>
+    <section class="login-box">
+        <div class="login-mobile-brand">Foodie <b>AI</b></div>
+        <p class="role-page-kicker">Chào mừng trở lại</p>
+        <h2>Đăng nhập hệ thống</h2>
+        <p class="login-help">Sử dụng tài khoản được chủ quán cấp cho bạn.</p>
+        <?php if ($error): ?><div class="error"><?= htmlspecialchars($error) ?></div><?php endif; ?>
+        <form method="POST">
+            <label>Tên đăng nhập</label>
+            <input type="text" name="username" autocomplete="username" placeholder="Nhập username" required autofocus>
+            <label>Mật khẩu</label>
+            <input type="password" name="password" autocomplete="current-password" placeholder="Nhập mật khẩu" required>
+            <button type="submit">Đăng nhập vào workspace</button>
+        </form>
+        <a class="login-back" href="/">← Quay lại trang chủ</a>
+    </section>
+</main>
 </body>
 </html>
