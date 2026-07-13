@@ -1967,6 +1967,50 @@ button:not(.btn-light):not(.secondary-btn) strong,
 }
 
 /* =========================================================
+   CUSTOMER ORDER SUCCESS 2.0
+========================================================= */
+body.customer-success-page { min-height:100vh; margin:0; padding:28px; display:grid; place-items:center; background:radial-gradient(circle at 85% 5%,rgba(181,138,82,.18),transparent 28%),#f5f2eb; color:#18211d; }
+.success-shell-v2 { width:min(1080px,100%); display:grid; grid-template-columns:minmax(0,1.25fr) minmax(330px,.75fr); overflow:hidden; border:1px solid rgba(23,63,53,.12); border-radius:28px; background:#fff; box-shadow:0 35px 100px rgba(16,43,36,.16); }
+.success-brand { grid-column:1/-1; min-height:75px; padding:0 32px; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid #e8ece9; background:#fff; }
+.success-brand a { display:flex; align-items:center; gap:10px; color:#173f35; }
+.success-brand a>span { width:37px; height:37px; display:grid; place-items:center; border-radius:11px; color:#fff; background:#173f35; font:800 10px Manrope,sans-serif; }
+.success-brand strong { font:800 14px Manrope,sans-serif; }
+.success-hero-v2 { padding:clamp(38px,6vw,72px); }
+.success-checkmark { width:54px; height:54px; display:grid; place-items:center; border-radius:50%; color:#fff; background:#2f8a63; box-shadow:0 12px 30px rgba(47,138,99,.2); font-size:23px; font-weight:800; }
+.success-kicker { margin:22px 0 10px; color:#9a7040; font-size:8px; font-weight:800; letter-spacing:.12em; }
+.success-hero-v2 h1 { margin:0; color:#102b24; font:800 clamp(38px,5vw,62px)/1.02 Manrope,sans-serif; letter-spacing:-.05em; }
+.success-lead { max-width:590px; margin:20px 0 28px; color:#6f7a74; font-size:11px; line-height:1.75; }
+.success-order-ticket { display:grid; grid-template-columns:1.3fr .7fr 1fr; overflow:hidden; border:1px solid #dfe5e1; border-radius:14px; background:#f7f9f7; }
+.success-order-ticket>div { padding:14px; display:flex; flex-direction:column; gap:5px; border-right:1px solid #dfe5e1; }
+.success-order-ticket>div:last-child { border-right:0; }
+.success-order-ticket span { color:#87918c; font-size:7px; text-transform:uppercase; }
+.success-order-ticket strong { overflow:hidden; color:#173f35; font:700 12px Manrope,sans-serif; text-overflow:ellipsis; white-space:nowrap; }
+.success-actions-v2 { margin-top:18px; display:flex; gap:8px; }
+.success-actions-v2 a { min-height:45px; padding:0 18px; display:inline-flex; align-items:center; justify-content:center; border-radius:11px; font-size:9px; font-weight:700; }
+.success-primary { color:#fff; background:#173f35; }
+.success-primary:hover { color:#fff; background:#245b4c; }
+.success-secondary { border:1px solid #d9e1dc; color:#173f35; background:#fff; }
+.success-progress-card { margin:14px; padding:28px; border-radius:20px; background:#eef2ef; }
+.success-progress-head { display:flex; align-items:flex-start; justify-content:space-between; gap:12px; }
+.success-progress-head small { color:#84908a; font-size:8px; text-transform:uppercase; }
+.success-progress-head h2 { margin:5px 0 0; color:#173f35; font-size:19px; }
+#order-live-dot { width:10px; height:10px; border:3px solid #d4ebdf; border-radius:50%; background:#36a873; box-sizing:content-box; }
+.success-progress-line { margin-top:26px; }
+.success-progress-line article { position:relative; min-height:86px; display:grid; grid-template-columns:34px 1fr; gap:12px; opacity:.42; }
+.success-progress-line article::after { content:""; position:absolute; width:1px; height:48px; left:16px; top:38px; background:#c9d3cd; }
+.success-progress-line article:last-child::after { display:none; }
+.success-progress-line article i { width:34px; height:34px; display:grid; place-items:center; border:1px solid #cbd5cf; border-radius:50%; color:#637069; background:#fff; font:normal 700 9px Manrope,sans-serif; }
+.success-progress-line article strong { color:#23322b; font-size:10px; }
+.success-progress-line article p { margin:4px 0; color:#7d8882; font-size:8px; line-height:1.55; }
+.success-progress-line article.active { opacity:1; }
+.success-progress-line article.active i { border-color:#173f35; color:#fff; background:#173f35; }
+.success-note-v2 { margin-top:4px; padding:14px; border:1px solid #dae2dd; border-radius:12px; background:rgba(255,255,255,.62); }
+.success-note-v2 strong { color:#173f35; font-size:9px; }
+.success-note-v2 p { margin:5px 0 0; color:#75817a; font-size:8px; line-height:1.55; }
+
+@media(max-width:780px){body.customer-success-page{padding:14px}.success-shell-v2{grid-template-columns:1fr;border-radius:20px}.success-brand{min-height:66px;padding:0 20px}.success-brand .online-indicator{display:none}.success-hero-v2{padding:34px 23px 24px}.success-hero-v2 h1{font-size:40px}.success-order-ticket{grid-template-columns:1fr 1fr}.success-order-ticket>div:first-child{grid-column:1/-1;border-right:0;border-bottom:1px solid #dfe5e1}.success-actions-v2{flex-direction:column}.success-progress-card{margin:0 12px 12px;padding:22px}.success-progress-line article{min-height:76px}}
+
+/* =========================================================
    FOODIE OPERATIONS UI 2.0
 ========================================================= */
 .clean-page-header { align-items:center; }

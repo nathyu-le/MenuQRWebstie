@@ -1088,3 +1088,59 @@ h1,h2,h3,.food-price { font-family:Manrope,"Be Vietnam Pro",sans-serif; }
 .ai-set-box button * {
     color:#fff !important;
 }
+
+/* =========================================================
+   DIGITAL DINING EXPERIENCE 2.0
+========================================================= */
+body.menu-page { background:linear-gradient(180deg,#f8f6f1 0,#f4f1ea 100%); }
+.menu-navbar { position:sticky; top:0; z-index:80; backdrop-filter:blur(18px); box-shadow:0 1px 0 rgba(16,43,36,.08); }
+.menu-navbar-inner { min-height:82px; }
+.brand-logo { width:46px; height:46px; border-radius:13px; box-shadow:none; }
+.brand-text h1 { font-size:17px; letter-spacing:-.035em; }
+.brand-text p { color:#8a938e; font-size:8px; letter-spacing:.06em; text-transform:uppercase; }
+.menu-nav-actions { gap:7px; }
+.nav-link,.table-pill { min-height:39px; padding:0 14px; border-radius:99px; font-size:10px; }
+.menu-main { padding-top:22px; padding-bottom:90px; }
+.menu-hero { min-height:0; grid-template-columns:minmax(0,1.4fr) minmax(300px,.6fr); gap:12px; }
+.hero-panel { min-height:330px; padding:clamp(30px,5vw,58px); display:flex; flex-direction:column; justify-content:center; border-radius:24px; box-shadow:0 24px 65px rgba(16,43,36,.16); }
+.hero-panel h2 { max-width:660px; margin:15px 0; font-size:clamp(35px,5vw,60px); line-height:1.02; }
+.hero-panel > p { max-width:590px; color:rgba(255,255,255,.7); font-size:13px; line-height:1.7; }
+.hero-eyebrow { width:max-content; font-size:8px; letter-spacing:.11em; text-transform:uppercase; }
+.secondary-cta { min-height:43px; padding:0 17px; border:1px solid rgba(255,255,255,.28); border-radius:99px; color:#fff; background:rgba(255,255,255,.08); font-size:10px; }
+.hero-side,.side-card { height:100%; }
+.side-card { padding:27px; border:1px solid #dfe5e1; border-radius:24px; background:#fff; box-shadow:0 16px 45px rgba(16,43,36,.07); }
+.side-card h3 { color:#173f35; font-size:18px; }
+.side-card > p { color:#748079; font-size:10px; line-height:1.65; }
+.hero-stats-grid { margin-top:22px; grid-template-columns:1fr 1fr; gap:7px; }
+.clean-stat { min-height:80px; padding:13px; border:1px solid #e5e9e6; border-radius:12px; background:#f6f8f6; }
+.clean-stat strong { color:#173f35; font-size:17px; }
+.clean-stat span { color:#7d8882; font-size:8px; }
+.menu-toolbar { position:sticky; top:90px; z-index:50; margin:18px 0 40px; padding:13px; border:1px solid #dfe4e1; border-radius:18px; background:rgba(255,254,252,.94); box-shadow:0 12px 35px rgba(16,43,36,.08); backdrop-filter:blur(16px); }
+.toolbar-form { align-items:end; gap:8px; }
+.field-label { margin-bottom:6px; color:#7d8882; font-size:8px; text-transform:uppercase; }
+.search-input,.category-select,.search-btn { min-height:43px; border-radius:11px; }
+.category-chips { margin-top:10px; padding-top:10px; border-top:1px solid #edf0ee; flex-wrap:nowrap; overflow-x:auto; }
+.category-chip { flex:0 0 auto; padding:8px 12px; border-radius:99px; font-size:9px; }
+.section-heading { margin-bottom:18px; }
+.section-heading h2 { font-size:clamp(26px,3vw,36px); }
+.section-heading p { color:#7c8781; font-size:10px; }
+.result-count { padding:8px 12px; border:1px solid #dfe5e1; border-radius:99px; color:#5c6861; background:#fff; font-size:9px; }
+.food-grid { grid-template-columns:repeat(3,minmax(0,1fr)); gap:14px; }
+.food-card-pro { overflow:hidden; border:1px solid #dfe5e1; border-radius:18px; background:#fff; box-shadow:0 8px 25px rgba(16,43,36,.055); }
+.food-card-pro:hover { transform:translateY(-3px); box-shadow:0 18px 42px rgba(16,43,36,.11); }
+.food-photo { aspect-ratio:4/3; border-radius:0; }
+.food-photo img { transition:transform .45s ease; }
+.food-card-pro:hover .food-photo img { transform:scale(1.035); }
+.food-content { padding:17px; }
+.food-category { padding:5px 8px; border-radius:99px; color:#53635a; background:#edf2ef; font-size:7px; }
+.food-rating { color:#9a7040; font-size:8px; }
+.food-content h3 { margin:12px 0 7px; font-size:18px; line-height:1.2; }
+.food-desc { min-height:38px; color:#7b8580; font-size:9px; line-height:1.55; }
+.food-footer { margin-top:16px; padding-top:13px; border-top:1px solid #edf0ee; }
+.food-price { font-size:22px; }
+.order-line { grid-template-columns:58px 1fr; }
+.qty-input,.add-btn { min-height:41px; border-radius:10px; }
+.add-btn { font-size:9px; }
+
+@media(max-width:960px){.menu-hero{grid-template-columns:1fr}.hero-panel{min-height:300px}.hero-side{display:none}.food-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.menu-toolbar{top:78px}}
+@media(max-width:620px){.menu-navbar-inner{min-height:70px}.menu-main{padding:12px 12px 70px}.menu-nav-actions .nav-link{display:none}.menu-hero{display:block}.hero-panel{min-height:250px;padding:27px 21px;border-radius:18px}.hero-panel h2{font-size:34px}.hero-panel>p{font-size:10px}.menu-toolbar{top:72px;margin:12px 0 30px;padding:10px;border-radius:14px}.toolbar-form{grid-template-columns:1fr}.field-wrap:nth-child(2){display:none}.category-chips{margin-top:8px}.food-grid{grid-template-columns:1fr}.food-card-pro{display:grid;grid-template-columns:125px 1fr}.food-photo{height:100%;aspect-ratio:auto}.food-content{padding:14px}.food-desc{display:none}.food-footer{margin-top:10px}.food-price{font-size:18px}.order-line{grid-template-columns:48px 1fr}.food-floating-badges{gap:3px}.food-floating-badges .tag:nth-child(n+3){display:none}}

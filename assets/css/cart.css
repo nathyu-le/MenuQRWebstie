@@ -728,6 +728,48 @@ h1,h2,h3,.summary-total strong,.line-total { font-family:Manrope,"Be Vietnam Pro
 .summary-total span {
     color:#f4eadb;
 }
+
+/* =========================================================
+   DINING CART EXPERIENCE 2.0
+========================================================= */
+body.cart-page { background:linear-gradient(180deg,#f8f6f1,#f3f0e9); }
+.cart-navbar { position:sticky; top:0; z-index:70; min-height:78px; backdrop-filter:blur(18px); box-shadow:0 1px 0 rgba(16,43,36,.08); }
+.cart-navbar-inner { min-height:78px; }
+.brand-mark { width:44px; height:44px; border-radius:13px; font-size:12px; box-shadow:none; }
+.brand-text h1 { font-size:16px; }
+.brand-text p { color:#89938e; font-size:8px; text-transform:uppercase; letter-spacing:.06em; }
+.nav-link,.table-pill { min-height:39px; padding:0 14px; border-radius:99px; font-size:9px; }
+.cart-main { padding-top:22px; padding-bottom:80px; }
+.cart-hero { min-height:0; margin-bottom:16px; padding:28px 32px; border-radius:20px; box-shadow:0 18px 50px rgba(16,43,36,.14); }
+.cart-hero h2 { max-width:680px; margin:11px 0 8px; font-size:clamp(28px,4vw,42px); line-height:1.08; }
+.cart-hero p { max-width:760px; margin:0; color:rgba(255,255,255,.68); font-size:10px; line-height:1.65; }
+.cart-hero-label { padding:6px 9px; font-size:7px; letter-spacing:.1em; text-transform:uppercase; }
+.cart-layout { grid-template-columns:minmax(0,1.45fr) minmax(310px,.65fr); gap:14px; align-items:start; }
+.cart-panel,.summary-panel,.empty-panel { border-radius:18px; box-shadow:0 10px 32px rgba(16,43,36,.065); }
+.panel-head { padding:17px 20px; background:#fff; }
+.panel-head h3,.summary-panel h3 { font-size:17px; }
+.panel-head span { padding:6px 9px; border-radius:99px; background:#edf2ef; font-size:8px; }
+.cart-item { padding:16px 19px; grid-template-columns:76px minmax(0,1fr) auto; gap:14px; }
+.cart-thumb { width:76px; height:76px; border-radius:12px; }
+.item-title { font-size:15px; }
+.meta-pill { padding:5px 7px; font-size:7px; }
+.item-price { color:#173f35; font-size:13px; }
+.qty-control { border-radius:9px; }
+.qty-control button { width:31px; height:31px; min-height:31px; padding:0; }
+.line-total { color:#173f35; font-size:12px; }
+.remove-btn { min-height:30px; padding:5px 9px; border:0; color:#a44b46; background:transparent; font-size:8px; }
+.summary-panel { position:sticky; top:94px; padding:21px; }
+.summary-row { padding:10px 0; font-size:10px; }
+.summary-total { margin:14px 0; padding:16px; border-radius:13px; }
+.summary-total span { font-size:9px; }
+.summary-total strong { font-size:25px; }
+.order-note { min-height:88px; padding:12px; border-radius:12px; font-size:10px; }
+.summary-actions { gap:7px; }
+.primary-btn,.secondary-btn,.danger-soft-btn { min-height:42px; padding:11px; border-radius:10px; font-size:9px; }
+.cart-hint { padding-top:12px; color:#89938e; font-size:8px; line-height:1.55; }
+
+@media(max-width:850px){.cart-layout{grid-template-columns:1fr}.summary-panel{position:static}.cart-hero{padding:25px}.cart-main{padding-inline:14px}}
+@media(max-width:560px){.cart-navbar-inner{min-height:68px}.cart-nav-actions .nav-link{display:none}.cart-main{padding-top:12px}.cart-hero{padding:22px 18px;border-radius:16px}.cart-hero h2{font-size:29px}.cart-item{grid-template-columns:64px 1fr;padding:14px}.cart-thumb{width:64px;height:64px}.item-side{grid-column:1/-1;display:grid;grid-template-columns:auto 1fr auto;align-items:center}.line-total{text-align:center}.summary-panel{padding:17px}.summary-total{display:flex;text-align:left}.summary-total strong{margin-top:0}}
 .summary-total strong {
     color:#fff;
     text-shadow:0 1px 1px rgba(0,0,0,.12);
