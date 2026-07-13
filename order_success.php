@@ -29,6 +29,7 @@ $statusLabels=['moi'=>'Đã gửi về bếp','dang_lam'=>'Bếp đang chuẩn b
         <div class="success-note-v2"><strong>Cần hỗ trợ?</strong><p>Vui lòng gọi nhân viên tại bàn nếu bạn cần thay đổi hoặc hủy món.</p></div>
     </aside>
 </main>
+<nav class="customer-mobile-dock success-mobile-dock" aria-label="Điều hướng sau order"><a href="/menu.php"><i>+</i><span>Gọi thêm</span></a><a href="/cart.php"><i>Bag</i><span>Giỏ hàng</span></a><a class="active" href="/order_success.php?ma_don=<?= urlencode($maDon) ?>"><i>✓</i><span>Đơn hiện tại</span></a></nav>
 <script>
 const orderCode=<?= json_encode($maDon,JSON_UNESCAPED_UNICODE) ?>;
 const labels={moi:'Đã gửi về bếp',dang_lam:'Bếp đang chuẩn bị',da_xong:'Món đã sẵn sàng',da_thanh_toan:'Đã thanh toán',huy:'Đơn đã hủy'};

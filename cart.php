@@ -78,10 +78,10 @@ $soBan = $_SESSION['so_ban'] ?? 'Chưa chọn';
 <main class="cart-main">
     <section class="cart-hero">
         <div class="cart-hero-label">
-            Order review
+            Kiểm tra order
         </div>
 
-        <h2>Kiểm tra món trước khi gửi về bếp.</h2>
+        <h2>Order của bạn đã sẵn sàng.</h2>
 
         <p>
             Bạn có thể tăng giảm số lượng, xóa món, ghi chú cho bếp và gửi order.
@@ -256,6 +256,13 @@ $soBan = $_SESSION['so_ban'] ?? 'Chưa chọn';
         </section>
     <?php endif; ?>
 </main>
+
+<nav class="customer-mobile-dock cart-mobile-dock" aria-label="Điều hướng giỏ hàng">
+    <a href="/menu.php"><i>←</i><span>Chọn món</span></a>
+    <a class="active" href="/cart.php"><i>Bag</i><span><?= number_format($totalQty) ?> món</span></a>
+    <button type="button" onclick="openTablePopup()"><i>#</i><span>Bàn <?= htmlspecialchars($soBan) ?></span></button>
+    <?php if (!empty($items)): ?><button type="button" class="dock-order-button" onclick="submitOrder()"><i>✓</i><span>Gửi order</span></button><?php else: ?><a href="/menu.php"><i>+</i><span>Thêm món</span></a><?php endif; ?>
+</nav>
 
 <!-- POPUP NHẬP SỐ BÀN -->
 <div id="table-popup" class="popup hidden">

@@ -100,6 +100,13 @@ $hotFoodCount = (int) $pdo->query("
       AND tag_hot = 1
 ")->fetchColumn();
 
+$cartItemCount = 0;
+if (!empty($_SESSION['ban_id'])) {
+    $cartCountStmt = $pdo->prepare("SELECT COALESCE(SUM(so_luong),0) FROM gio_hang_tam WHERE ban_id=?");
+    $cartCountStmt->execute([(int) $_SESSION['ban_id']]);
+    $cartItemCount = (int) $cartCountStmt->fetchColumn();
+}
+
 function build_category_url(string $cat): string
 {
     $params = $_GET;
@@ -172,11 +179,11 @@ function build_all_url(): string
                     Modern restaurant ordering
                 </div>
 
-                <h2>Oder Siêu Nhanh, Lên Món Hấp Dẫn</h2>
+                <h2>Chọn món tinh tế.<br>Phục vụ đúng nhịp.</h2>
 
                 <p>
-                    Trải nghiệm menu online được thiết kế theo thời đại công nghệ
-                    chọn món, thêm vào giỏ, gọi thêm nhiều lần và thanh toán nhanh theo bàn.
+                    Khám phá món ăn, gửi yêu cầu trực tiếp tới bếp và gọi thêm bất cứ lúc nào.
+                    Mọi order tại cùng một bàn sẽ được gộp khi thanh toán.
                 </p>
 
                 <div class="hero-actions">
@@ -189,7 +196,7 @@ function build_all_url(): string
 
             <aside class="hero-side">
                 <div class="side-card">
-                    <h3>Dining assistant</h3>
+                    <h3>Trợ lý chọn món</h3>
                     <p>
                         Foodie AI có thể gợi ý set món theo số người, ngân sách,
                         khẩu vị cay/không cay, món chay hoặc món phù hợp trẻ em.
@@ -382,6 +389,13 @@ function build_all_url(): string
         </section>
     </main>
 </div>
+
+<nav class="customer-mobile-dock" aria-label="Điều hướng gọi món">
+    <a class="active" href="/menu.php"><i>⌂</i><span>Menu</span></a>
+    <a href="/cart.php"><i>Bag</i><span>Giỏ hàng</span><?php if ($cartItemCount > 0): ?><b><?= $cartItemCount > 99 ? '99+' : $cartItemCount ?></b><?php endif; ?></a>
+    <button type="button" onclick="openTablePopup()"><i>#</i><span>Bàn <?= htmlspecialchars($_SESSION['so_ban'] ?? '—') ?></span></button>
+    <button type="button" onclick="toggleFoodieChat()"><i>AI</i><span>Gợi ý món</span></button>
+</nav>
 
 <!-- POPUP NHẬP SỐ BÀN -->
 <div id="table-popup" class="popup hidden">
