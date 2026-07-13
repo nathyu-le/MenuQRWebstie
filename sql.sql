@@ -188,13 +188,18 @@ CREATE TABLE IF NOT EXISTS mon_an (
     tag_hot TINYINT(1) NOT NULL DEFAULT 0,
     so_lan_goi INT NOT NULL DEFAULT 0,
     rating DECIMAL(2,1) NOT NULL DEFAULT 5.0,
-    trang_thai ENUM('dang_ban', 'tam_ngung') NOT NULL DEFAULT 'dang_ban',
+    trang_thai ENUM('dang_ban', 'tam_ngung', 'da_xoa') NOT NULL DEFAULT 'dang_ban',
     is_chay TINYINT(1) NOT NULL DEFAULT 0,
     is_cay TINYINT(1) NOT NULL DEFAULT 0,
     phu_hop_tre_em TINYINT(1) NOT NULL DEFAULT 1,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Đồng bộ trạng thái xóa mềm cho database phiên bản cũ.
+ALTER TABLE mon_an
+    MODIFY trang_thai ENUM('dang_ban', 'tam_ngung', 'da_xoa')
+    NOT NULL DEFAULT 'dang_ban';
 
 -- =========================================================
 -- GIỎ HÀNG TẠM THEO BÀN

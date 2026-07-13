@@ -141,6 +141,7 @@ function render_kitchen_cards(array $orders, string $status): void
     <main class="admin-content">
         <div class="kitchen-header-bar">
             <div>
+                <p class="role-page-kicker">Foodie AI · Vận hành bếp</p>
                 <h1>Màn hình bếp</h1>
                 <p>Quản lý tiến độ chế biến món ăn theo thời gian thực cơ bản.</p>
             </div>

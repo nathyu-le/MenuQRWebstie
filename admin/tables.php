@@ -1,117 +1,31 @@
 <?php
 session_start();
-
 require_once __DIR__ . '/../../app/config/database.php';
 require_once __DIR__ . '/../../app/helpers/auth.php';
 require_once __DIR__ . '/../../app/services/SettingService.php';
+require_roles(['owner','manager']);
 
-require_roles(['owner', 'manager']);
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $soBan = trim($_POST['so_ban'] ?? '');
-
-    if ($soBan !== '') {
-        $stmt = $pdo->prepare("
-            INSERT IGNORE INTO ban (so_ban, trang_thai) 
-            VALUES (?, 'trong')
-        ");
-
-        $stmt->execute([$soBan]);
-    }
-
-    header('Location: /admin/tables.php');
-    exit;
+if($_SERVER['REQUEST_METHOD']==='POST'){
+    $soBan=trim($_POST['so_ban']??'');
+    if($soBan!==''){$stmt=$pdo->prepare("INSERT IGNORE INTO ban(so_ban,trang_thai) VALUES(?,'trong')");$stmt->execute([$soBan]);}
+    header('Location:/admin/tables.php?created=1');exit;
 }
-
-$baseUrl = SettingService::get($pdo, 'site_base_url', '');
-
-if ($baseUrl === '') {
-    $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
-    $baseUrl = $scheme . '://' . ($_SERVER['HTTP_HOST'] ?? 'localhost');
-}
-
-$stmt = $pdo->query("
-    SELECT * 
-    FROM ban 
-    ORDER BY CAST(so_ban AS UNSIGNED), so_ban
-");
-
-$tables = $stmt->fetchAll();
+$baseUrl=SettingService::get($pdo,'site_base_url','');
+if($baseUrl===''){$scheme=(!empty($_SERVER['HTTPS'])&&$_SERVER['HTTPS']!=='off')?'https':'http';$baseUrl=$scheme.'://'.($_SERVER['HTTP_HOST']??'localhost');}
+$tables=$pdo->query("SELECT * FROM ban ORDER BY CAST(so_ban AS UNSIGNED),so_ban")->fetchAll();
+$available=0;$serving=0;$locked=0;foreach($tables as $table){if($table['trang_thai']==='trong')$available++;elseif($table['trang_thai']==='dang_phuc_vu')$serving++;else$locked++;}
+$activePage='tables';
 ?>
-
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-    <meta charset="UTF-8">
-    <title>Quản lý bàn</title>
-    <link rel="stylesheet" href="/assets/css/style.css?v=<?= time() ?>">
-</head>
-<body>
-
-<div class="admin-layout">
-    <?php $activePage = 'tables'; require __DIR__ . '/_sidebar.php'; ?>
-    <aside class="admin-sidebar" style="display:none">
-        <h2>Foodie AI</h2>
-        <a href="/admin/dashboard.php">Dashboard Order</a>
-        <a href="/admin/kitchen.php">Màn hình bếp</a>
-        <a href="/admin/menu.php">Quản lý menu</a>
-        <a href="/admin/tables.php">Quản lý bàn + QR</a>
-        <a href="/admin/reports.php">Báo cáo</a>
-        <a href="/admin/chat_history.php">Lịch sử AI</a>
-        <a href="/admin/settings.php">Settings AI</a>
-        <a href="/admin/logout.php">Đăng xuất</a>
-    </aside>
-
-    <main class="admin-content">
-        <h1>Quản lý bàn + QR</h1>
-
-        <form method="POST" class="form-card">
-            <h3>Thêm bàn</h3>
-            <input name="so_ban" placeholder="Nhập số bàn" required>
-            <button type="submit">Thêm bàn</button>
-        </form>
-
-        <table class="table">
-            <tr>
-                <th>Số bàn</th>
-                <th>Trạng thái</th>
-                <th>Link order</th>
-                <th>QR</th>
-                <th>Hành động</th>
-            </tr>
-
-            <?php foreach ($tables as $table): ?>
-                <?php
-                $url = rtrim($baseUrl, '/') . '/menu.php?table=' . urlencode($table['so_ban']);
-                ?>
-
-                <tr>
-                    <td>Bàn <?= htmlspecialchars($table['so_ban']) ?></td>
-                    <td><?= htmlspecialchars($table['trang_thai']) ?></td>
-
-                    <td>
-                        <input value="<?= htmlspecialchars($url) ?>" readonly onclick="this.select()">
-                    </td>
-
-                    <td>
-                        <img 
-                            width="120" 
-                            height="120"
-                            src="https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=<?= urlencode($url) ?>"
-                            alt="QR bàn <?= htmlspecialchars($table['so_ban']) ?>"
-                        >
-                    </td>
-
-                    <td>
-                        <a href="/admin/table_toggle.php?id=<?= (int) $table['id'] ?>">
-                            <?= $table['trang_thai'] === 'tam_khoa' ? 'Mở khóa' : 'Tạm khóa' ?>
-                        </a>
-                    </td>
-                </tr>
-            <?php endforeach; ?>
-        </table>
-    </main>
-</div>
-
-</body>
-</html>
+<!DOCTYPE html><html lang="vi"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Bàn và mã QR</title><link rel="stylesheet" href="/assets/css/style.css?v=<?= time() ?>"></head><body>
+<div class="admin-layout"><?php require __DIR__.'/_sidebar.php'; ?><main class="admin-content">
+    <div class="role-page-header clean-page-header"><div><p class="role-page-kicker">Sơ đồ phục vụ</p><h1>Bàn & mã QR</h1><p>Quản lý trạng thái bàn và đường dẫn order dành riêng cho từng bàn.</p></div><div class="online-indicator"><i></i> <?= count($tables) ?> bàn đã cấu hình</div></div>
+    <?php if(isset($_GET['created'])): ?><div class="role-alert success">Đã cập nhật danh sách bàn.</div><?php endif; ?>
+    <div class="metrics-grid table-management-metrics"><div class="metric-card"><div class="metric-label">Tổng số bàn</div><div class="metric-value"><?= count($tables) ?></div></div><div class="metric-card"><div class="metric-label">Đang trống</div><div class="metric-value"><?= $available ?></div></div><div class="metric-card"><div class="metric-label">Đang phục vụ</div><div class="metric-value"><?= $serving ?></div></div><div class="metric-card"><div class="metric-label">Tạm khóa</div><div class="metric-value"><?= $locked ?></div></div></div>
+    <form method="POST" class="form-card quick-create-bar"><div><label>Thêm bàn mới</label><input name="so_ban" required placeholder="VD: 12 hoặc VIP-01"></div><button type="submit">Thêm bàn</button><small>Mã QR order được tạo tự động sau khi thêm.</small></form>
+    <div class="section-title-row"><div><h2>Danh sách bàn</h2><p>Bấm vào đường dẫn để sao chép hoặc quét thử QR.</p></div><a class="btn-light" href="/admin/tables.php">Làm mới</a></div>
+    <div class="business-table-grid">
+    <?php foreach($tables as $table): $url=rtrim($baseUrl,'/').'/menu.php?table='.urlencode($table['so_ban']); $statusLabel=$table['trang_thai']==='trong'?'Trống':($table['trang_thai']==='dang_phuc_vu'?'Đang phục vụ':'Tạm khóa'); ?>
+        <article class="business-table-card <?= htmlspecialchars($table['trang_thai']) ?>"><div class="business-table-head"><div><small>Bàn</small><strong><?= htmlspecialchars($table['so_ban']) ?></strong></div><span><?= $statusLabel ?></span></div><div class="business-table-qr"><img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=<?= urlencode($url) ?>" alt="QR bàn <?= htmlspecialchars($table['so_ban']) ?>"></div><button type="button" class="table-copy-link" data-copy="<?= htmlspecialchars($url) ?>" onclick="copyTableLink(this)">Sao chép link order</button><div class="business-table-actions"><a class="btn-light" href="<?= htmlspecialchars($url) ?>" target="_blank">Mở menu</a><a class="btn-light" href="/admin/table_toggle.php?id=<?= (int)$table['id'] ?>"><?= $table['trang_thai']==='tam_khoa'?'Mở khóa':'Tạm khóa' ?></a></div></article>
+    <?php endforeach; ?>
+    </div>
+</main></div><script>function copyTableLink(button){navigator.clipboard.writeText(button.dataset.copy).then(function(){const old=button.textContent;button.textContent='Đã sao chép';setTimeout(function(){button.textContent=old},1600)});}</script></body></html>
