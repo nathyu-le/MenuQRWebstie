@@ -82,6 +82,18 @@ $activePage = 'cashier';
                     <?php endforeach; ?>
                 </div>
                 <div class="pos-print-meta"><span><?= date('d/m/Y H:i') ?></span><span><?= htmlspecialchars($restaurantName) ?></span></div>
+                <?php if ($transferReady): ?>
+                <div class="print-transfer-receipt print-only">
+                    <div>
+                        <strong>Quét QR để chuyển khoản</strong>
+                        <span><?= htmlspecialchars($bankCode) ?> · <?= htmlspecialchars($bankAccount) ?></span>
+                        <span><?= htmlspecialchars($bankName) ?></span>
+                        <span>Nội dung: <?= htmlspecialchars($transferContent) ?></span>
+                        <b><?= number_format($totalBill,0,',','.') ?>đ</b>
+                    </div>
+                    <img src="<?= htmlspecialchars($qrUrl) ?>" alt="QR thanh toán chuyển khoản">
+                </div>
+                <?php endif; ?>
             </section>
 
             <aside class="pos-payment-card no-print">
@@ -130,6 +142,7 @@ $activePage = 'cashier';
             document.querySelectorAll('.payment-method').forEach(function (item) { item.classList.remove('active'); });
             radio.closest('.payment-method').classList.add('active');
             document.querySelectorAll('.payment-panel').forEach(function (panel) { panel.classList.toggle('active', panel.dataset.paymentPanel === radio.value); });
+            document.body.classList.toggle('print-bank-transfer', radio.value === 'chuyen_khoan');
         });
     });
     const received = document.getElementById('cash-received');
