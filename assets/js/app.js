@@ -51,17 +51,39 @@ function addToCart(monAnId) {
         method: 'POST',
         body: formData
     })
-    .then(res => res.json())
-    .then(res => {
-        if (res.need_table) {
+    .then(async response => {
+        const raw = await response.text();
+        let data;
+
+        try {
+            data = JSON.parse(raw);
+        } catch (error) {
+            throw new Error('API giỏ hàng trả về dữ liệu không hợp lệ (HTTP ' + response.status + ').');
+        }
+
+        if (!response.ok && !data.need_table) {
+            throw new Error(data.message || 'Không thể thêm món.');
+        }
+
+        return data;
+    })
+    .then(data => {
+        if (data.need_table) {
+            alert(data.message || 'Vui lòng chọn lại bàn.');
             openTablePopup();
             return;
         }
 
-        alert(res.message);
+        if (!data.success) {
+            alert(data.message || 'Không thể thêm món.');
+            return;
+        }
+
+        alert(data.message);
     })
-    .catch(() => {
-        alert('Không thể thêm món.');
+    .catch(error => {
+        console.error('Add to cart failed:', error);
+        alert(error.message || 'Không thể thêm món.');
     });
 }
 

@@ -1,271 +1,148 @@
 <?php
 session_start();
 
-ini_set('display_errors', '1');
-error_reporting(E_ALL);
-
 require_once __DIR__ . '/../../app/config/database.php';
 require_once __DIR__ . '/../../app/helpers/auth.php';
+require_once __DIR__ . '/../../app/services/SettingService.php';
 
 require_roles(['owner', 'manager', 'cashier']);
 
 $banId = (int) ($_GET['ban_id'] ?? 0);
+if ($banId <= 0) die('Thiếu mã bàn.');
 
-if ($banId <= 0) {
-    die('Thiếu mã bàn.');
-}
-
-/*
-|--------------------------------------------------------------------------
-| Lấy thông tin bàn
-|--------------------------------------------------------------------------
-*/
-$stmt = $pdo->prepare("SELECT * FROM ban WHERE id = ?");
+$stmt = $pdo->prepare('SELECT * FROM ban WHERE id=?');
 $stmt->execute([$banId]);
 $ban = $stmt->fetch();
+if (!$ban) die('Không tìm thấy bàn.');
 
-if (!$ban) {
-    die('Không tìm thấy bàn.');
-}
-
-/*
-|--------------------------------------------------------------------------
-| Lấy các đơn chưa thanh toán của bàn
-|--------------------------------------------------------------------------
-*/
-$stmt = $pdo->prepare("
-    SELECT *
-    FROM don_hang
-    WHERE ban_id = ?
-      AND trang_thai IN ('moi', 'dang_lam', 'da_xong')
-    ORDER BY created_at ASC
-");
+$stmt = $pdo->prepare("SELECT * FROM don_hang WHERE ban_id=? AND trang_thai IN ('moi','dang_lam','da_xong') ORDER BY created_at ASC");
 $stmt->execute([$banId]);
 $orders = $stmt->fetchAll();
-
 $orderIds = array_column($orders, 'id');
+$items = [];
+$totalBill = 0;
 
-if (empty($orderIds)) {
-    $items = [];
-    $totalBill = 0;
-} else {
+if ($orderIds) {
     $placeholders = implode(',', array_fill(0, count($orderIds), '?'));
-
-    /*
-    |--------------------------------------------------------------------------
-    | Gộp món giống nhau lại
-    |--------------------------------------------------------------------------
-    */
-    $stmt = $pdo->prepare("
-        SELECT 
-            ten_mon,
-            gia,
-            SUM(so_luong) AS tong_so_luong,
-            SUM(thanh_tien) AS tong_tien
-        FROM chi_tiet_don_hang
-        WHERE don_hang_id IN ($placeholders)
-        GROUP BY ten_mon, gia
-        ORDER BY ten_mon ASC
-    ");
+    $stmt = $pdo->prepare("SELECT ten_mon,gia,SUM(so_luong) tong_so_luong,SUM(thanh_tien) tong_tien FROM chi_tiet_don_hang WHERE don_hang_id IN ($placeholders) GROUP BY ten_mon,gia ORDER BY MIN(id)");
     $stmt->execute($orderIds);
     $items = $stmt->fetchAll();
-
-    $totalBill = 0;
-    foreach ($items as $item) {
-        $totalBill += (float) $item['tong_tien'];
-    }
+    foreach ($items as $item) $totalBill += (float) $item['tong_tien'];
 }
 
 $hasProcessingOrder = false;
-
 foreach ($orders as $order) {
-    if ($order['trang_thai'] === 'moi' || $order['trang_thai'] === 'dang_lam') {
-        $hasProcessingOrder = true;
-        break;
-    }
+    if (in_array($order['trang_thai'], ['moi', 'dang_lam'], true)) $hasProcessingOrder = true;
 }
 
-function status_text($status)
-{
-    if ($status === 'moi') return 'Mới';
-    if ($status === 'dang_lam') return 'Đang làm';
-    if ($status === 'da_xong') return 'Đã xong';
-    if ($status === 'da_thanh_toan') return 'Đã thanh toán';
-    if ($status === 'huy') return 'Hủy';
-    return $status;
-}
+$restaurantName = SettingService::get($pdo, 'restaurant_name', 'Foodie AI Restaurant');
+$bankEnabled = SettingService::get($pdo, 'bank_transfer_enabled', '0') === '1';
+$bankCode = strtoupper(SettingService::get($pdo, 'bank_code', ''));
+$bankAccount = SettingService::get($pdo, 'bank_account_number', '');
+$bankName = SettingService::get($pdo, 'bank_account_name', '');
+$transferPrefix = SettingService::get($pdo, 'bank_transfer_prefix', 'FOODIE');
+$qrTemplate = SettingService::get($pdo, 'bank_qr_template', 'compact2');
+$transferReady = $bankEnabled && $bankCode !== '' && $bankAccount !== '';
+$transferContent = trim($transferPrefix . ' BAN' . $ban['so_ban']);
+$qrUrl = $transferReady
+    ? 'https://img.vietqr.io/image/' . rawurlencode($bankCode) . '-' . rawurlencode($bankAccount) . '-' . rawurlencode($qrTemplate)
+      . '.png?amount=' . rawurlencode((string) round($totalBill))
+      . '&addInfo=' . rawurlencode($transferContent)
+      . '&accountName=' . rawurlencode($bankName)
+    : '';
+$activePage = 'cashier';
 ?>
-
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-    <meta charset="UTF-8">
-    <title>Hóa đơn bàn <?= htmlspecialchars($ban['so_ban']) ?> - Foodie AI</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Thu ngân · Bàn <?= htmlspecialchars($ban['so_ban']) ?></title>
     <link rel="stylesheet" href="/assets/css/style.css?v=<?= time() ?>">
-
-    <style>
-        @media print {
-            .no-print,
-            .admin-sidebar {
-                display: none !important;
-            }
-
-            .admin-layout {
-                display: block !important;
-            }
-
-            .admin-content {
-                padding: 0 !important;
-            }
-
-            body {
-                background: white !important;
-            }
-
-            .invoice-box {
-                box-shadow: none !important;
-                border: none !important;
-                width: 100% !important;
-            }
-        }
-    </style>
 </head>
 <body>
-
 <div class="admin-layout">
-    <?php $activePage = 'cashier'; require __DIR__ . '/_sidebar.php'; ?>
-    <aside class="admin-sidebar no-print" style="display:none">
-        <h2>Foodie AI</h2>
-        <p><?= htmlspecialchars($_SESSION['admin_username'] ?? 'Admin') ?></p>
-
-        <a href="/admin/dashboard.php">Dashboard Order</a>
-        <a href="/admin/kitchen.php">Màn hình bếp</a>
-        <a href="/admin/menu.php">Quản lý menu</a>
-        <a href="/admin/tables.php">Quản lý bàn + QR</a>
-        <a href="/admin/reports.php">Báo cáo</a>
-        <a href="/admin/chat_history.php">Lịch sử AI</a>
-        <a href="/admin/settings.php">Settings AI</a>
-        <a href="/admin/logout.php">Đăng xuất</a>
-    </aside>
-
+    <?php require __DIR__ . '/_sidebar.php'; ?>
     <main class="admin-content">
-        <div class="invoice-box">
-            <div class="invoice-header">
-                <div>
-                    <h1>Foodie AI Restaurant</h1>
-                    <p>Hóa đơn thanh toán theo bàn</p>
-                </div>
-
-                <div class="invoice-table-number">
-                    Bàn <?= htmlspecialchars($ban['so_ban']) ?>
-                </div>
-            </div>
-
-            <div class="invoice-info-grid">
-                <div>
-                    <strong>Ngày:</strong>
-                    <?= date('d/m/Y H:i') ?>
-                </div>
-
-                <div>
-                    <strong>Số đơn gộp:</strong>
-                    <?= count($orders) ?>
-                </div>
-
-                <div>
-                    <strong>Trạng thái:</strong>
-                    Chưa thanh toán
-                </div>
-            </div>
-
-            <?php if ($hasProcessingOrder): ?>
-                <div class="notice">
-                    Bàn này vẫn còn đơn đang ở trạng thái <strong>Mới / Đang làm</strong>. 
-                    Kiểm tra với bếp trước khi thanh toán.
-                </div>
-            <?php endif; ?>
-
-            <?php if (!empty($orders)): ?>
-                <div class="invoice-section">
-                    <h3>Các đơn được gộp</h3>
-
-                    <table class="table">
-                        <tr>
-                            <th>Mã đơn</th>
-                            <th>Trạng thái</th>
-                            <th>Thời gian</th>
-                            <th>Tổng tiền</th>
-                        </tr>
-
-                        <?php foreach ($orders as $order): ?>
-                            <tr>
-                                <td><?= htmlspecialchars($order['ma_don']) ?></td>
-                                <td><?= htmlspecialchars(status_text($order['trang_thai'])) ?></td>
-                                <td><?= htmlspecialchars($order['created_at']) ?></td>
-                                <td><?= number_format((float) $order['tong_tien'], 0, ',', '.') ?>đ</td>
-                            </tr>
-                        <?php endforeach; ?>
-                    </table>
-                </div>
-
-                <div class="invoice-section">
-                    <h3>Chi tiết món ăn</h3>
-
-                    <table class="table">
-                        <tr>
-                            <th>Món</th>
-                            <th>Đơn giá</th>
-                            <th>Số lượng</th>
-                            <th>Thành tiền</th>
-                        </tr>
-
-                        <?php foreach ($items as $item): ?>
-                            <tr>
-                                <td><?= htmlspecialchars($item['ten_mon']) ?></td>
-                                <td><?= number_format((float) $item['gia'], 0, ',', '.') ?>đ</td>
-                                <td><?= number_format((int) $item['tong_so_luong']) ?></td>
-                                <td><?= number_format((float) $item['tong_tien'], 0, ',', '.') ?>đ</td>
-                            </tr>
-                        <?php endforeach; ?>
-                    </table>
-                </div>
-
-                <div class="invoice-total">
-                    <span>Tổng thanh toán</span>
-                    <strong><?= number_format($totalBill, 0, ',', '.') ?>đ</strong>
-                </div>
-
-                <div class="invoice-actions no-print">
-                    <button onclick="window.print()">In hóa đơn</button>
-
-                    <form method="POST" action="/admin/table_checkout.php" onsubmit="return confirm('Xác nhận thanh toán toàn bộ đơn của bàn này?')">
-                        <?= csrf_field() ?>
-                        <input type="hidden" name="ban_id" value="<?= (int) $ban['id'] ?>">
-                        <select name="phuong_thuc" aria-label="Phương thức thanh toán" required>
-                            <option value="tien_mat">Tiền mặt</option>
-                            <option value="chuyen_khoan">Chuyển khoản</option>
-                            <option value="the">Thẻ</option>
-                            <option value="khac">Khác</option>
-                        </select>
-                        <button type="submit">Xác nhận đã thanh toán</button>
-                    </form>
-
-                    <a class="btn-light" href="<?= htmlspecialchars(role_home()) ?>">Quay lại màn hình làm việc</a>
-                </div>
-            <?php else: ?>
-                <div class="empty-box">
-                    Bàn này hiện không có đơn nào cần thanh toán.
-                </div>
-
-                <div class="invoice-actions no-print">
-                    <a class="btn-light" href="<?= htmlspecialchars(role_home()) ?>">Quay lại màn hình làm việc</a>
-                </div>
-            <?php endif; ?>
+        <div class="role-page-header clean-page-header no-print">
+            <div><p class="role-page-kicker"><?= htmlspecialchars($restaurantName) ?></p><h1>Thu ngân · Bàn <?= htmlspecialchars($ban['so_ban']) ?></h1><p><?= count($orders) ?> order được gộp trong hóa đơn này.</p></div>
+            <div class="online-indicator"><i></i> Trực tuyến</div>
         </div>
+
+        <?php if (!$orders): ?>
+            <div class="empty-box">Bàn này hiện không có hóa đơn cần thanh toán.</div>
+            <a class="btn-light no-print" href="<?= htmlspecialchars(role_home()) ?>">Quay lại</a>
+        <?php else: ?>
+        <div class="pos-checkout-layout">
+            <section class="pos-bill-card">
+                <div class="pos-bill-head"><div><small>Chi tiết hóa đơn</small><h2>Bàn <?= htmlspecialchars($ban['so_ban']) ?></h2></div><button type="button" class="btn-light no-print" onclick="window.print()">In hóa đơn</button></div>
+                <?php if ($hasProcessingOrder): ?><div class="notice no-print">Một số món vẫn đang được bếp xử lý. Hãy kiểm tra trước khi thanh toán.</div><?php endif; ?>
+                <div class="pos-item-list">
+                    <?php foreach ($items as $item): ?>
+                    <div class="pos-item-row"><div><strong><?= number_format((int)$item['tong_so_luong']) ?>× <?= htmlspecialchars($item['ten_mon']) ?></strong><small><?= number_format((float)$item['gia'],0,',','.') ?>đ / món</small></div><b><?= number_format((float)$item['tong_tien'],0,',','.') ?>đ</b></div>
+                    <?php endforeach; ?>
+                </div>
+                <div class="pos-print-meta"><span><?= date('d/m/Y H:i') ?></span><span><?= htmlspecialchars($restaurantName) ?></span></div>
+            </section>
+
+            <aside class="pos-payment-card no-print">
+                <div class="pos-total-label">Tạm tính</div>
+                <div class="pos-total-value"><?= number_format($totalBill,0,',','.') ?>đ</div>
+                <form method="POST" action="/admin/table_checkout.php" id="checkout-form" onsubmit="return confirmCheckout()">
+                    <?= csrf_field() ?><input type="hidden" name="ban_id" value="<?= (int)$ban['id'] ?>">
+                    <p class="payment-section-label">Phương thức</p>
+                    <div class="payment-method-grid">
+                        <label class="payment-method active"><input type="radio" name="phuong_thuc" value="tien_mat" checked><span>Tiền mặt</span></label>
+                        <label class="payment-method <?= $transferReady ? '' : 'disabled' ?>"><input type="radio" name="phuong_thuc" value="chuyen_khoan" <?= $transferReady ? '' : 'disabled' ?>><span>Chuyển khoản</span></label>
+                    </div>
+
+                    <div class="cash-payment-panel payment-panel active" data-payment-panel="tien_mat">
+                        <label>Khách đưa</label>
+                        <input type="number" id="cash-received" min="0" step="1000" placeholder="Nhập số tiền khách đưa">
+                        <div class="cash-change"><span>Tiền trả khách</span><strong id="cash-change">0đ</strong></div>
+                    </div>
+
+                    <div class="bank-payment-panel payment-panel" data-payment-panel="chuyen_khoan">
+                        <?php if ($transferReady): ?>
+                            <img src="<?= htmlspecialchars($qrUrl) ?>" alt="QR chuyển khoản <?= htmlspecialchars($bankCode) ?>">
+                            <div class="bank-transfer-details"><span><?= htmlspecialchars($bankCode) ?> · <?= htmlspecialchars($bankAccount) ?></span><strong><?= htmlspecialchars($bankName) ?></strong><small>Nội dung: <?= htmlspecialchars($transferContent) ?></small></div>
+                            <label>Mã giao dịch / tham chiếu</label><input name="ma_tham_chieu" maxlength="100" placeholder="Có thể nhập để đối soát">
+                        <?php else: ?>
+                            <p>Chủ quán chưa cấu hình chuyển khoản.</p>
+                        <?php endif; ?>
+                    </div>
+
+                    <label>Ghi chú thanh toán</label>
+                    <input name="ghi_chu_thanh_toan" maxlength="255" placeholder="Không bắt buộc">
+                    <button type="submit" class="checkout-confirm-btn">Xác nhận thanh toán</button>
+                </form>
+                <a class="pos-back-link" href="<?= htmlspecialchars(role_home()) ?>">Quay lại danh sách bàn</a>
+            </aside>
+        </div>
+        <?php endif; ?>
     </main>
 </div>
-
+<script>
+(function () {
+    const total = <?= json_encode($totalBill) ?>;
+    const radios = document.querySelectorAll('input[name="phuong_thuc"]');
+    radios.forEach(function (radio) {
+        radio.addEventListener('change', function () {
+            document.querySelectorAll('.payment-method').forEach(function (item) { item.classList.remove('active'); });
+            radio.closest('.payment-method').classList.add('active');
+            document.querySelectorAll('.payment-panel').forEach(function (panel) { panel.classList.toggle('active', panel.dataset.paymentPanel === radio.value); });
+        });
+    });
+    const received = document.getElementById('cash-received');
+    if (received) received.addEventListener('input', function () {
+        const change = Math.max(0, Number(received.value || 0) - total);
+        document.getElementById('cash-change').textContent = change.toLocaleString('vi-VN') + 'đ';
+    });
+})();
+function confirmCheckout() {
+    const method = document.querySelector('input[name="phuong_thuc"]:checked');
+    const label = method && method.value === 'chuyen_khoan' ? 'chuyển khoản' : 'tiền mặt';
+    return confirm('Xác nhận đã nhận đủ <?= number_format($totalBill,0,',','.') ?>đ bằng ' + label + '?');
+}
+</script>
 </body>
 </html>

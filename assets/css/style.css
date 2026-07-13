@@ -1921,3 +1921,170 @@ body:has(.login-box) { min-height:100vh; padding:24px; background:radial-gradien
     .cashbook-metrics, .cashbook-actions, .shift-identity { grid-template-columns: 1fr; }
     .role-page-header { align-items: flex-start; flex-direction: column; }
 }
+
+/* =========================================================
+   DARK SURFACE CONTRAST GUARD
+   Prevent legacy text colors from hiding totals and actions.
+========================================================= */
+.invoice-table-number,
+.invoice-table-number *,
+.invoice-total,
+.invoice-total span,
+.invoice-total strong {
+    color:#fff;
+}
+
+.invoice-total span {
+    color:#f4eadb;
+}
+
+.invoice-total strong {
+    text-shadow:0 1px 1px rgba(0,0,0,.12);
+}
+
+button:not(.btn-light):not(.secondary-btn),
+.btn:not(.btn-light),
+.primary-btn,
+button:not(.btn-light):not(.secondary-btn) span,
+button:not(.btn-light):not(.secondary-btn) strong,
+.btn:not(.btn-light) span,
+.btn:not(.btn-light) strong,
+.primary-btn span,
+.primary-btn strong {
+    color:#fff;
+}
+
+@media print {
+    .invoice-table-number,
+    .invoice-table-number *,
+    .invoice-total,
+    .invoice-total span,
+    .invoice-total strong {
+        color:#111 !important;
+        background:#fff !important;
+        text-shadow:none !important;
+    }
+}
+
+/* =========================================================
+   FOODIE OPERATIONS UI 2.0
+========================================================= */
+.clean-page-header { align-items:center; }
+.online-indicator { display:inline-flex; align-items:center; gap:7px; color:#718079; font-size:11px; white-space:nowrap; }
+.online-indicator i { width:9px; height:9px; border:3px solid #d9f0e5; border-radius:50%; background:#32a66f; box-sizing:content-box; }
+
+.settings-layout { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:16px; }
+.settings-card { margin:0; }
+.settings-wide { grid-column:1/-1; }
+.settings-card-head { margin-bottom:15px; display:flex; align-items:flex-start; justify-content:space-between; gap:15px; }
+.settings-card-head div { display:flex; align-items:center; gap:10px; }
+.settings-card-head h3 { margin:0; }
+.settings-card-head small { width:29px; height:29px; display:grid; place-items:center; border-radius:9px; color:#fff; background:var(--primary-dark); font:700 9px Manrope,sans-serif; }
+.settings-card-head > span,.settings-intro { color:var(--muted); font-size:10px; }
+.settings-intro { margin:-7px 0 14px; }
+.settings-two-columns,.settings-three-columns { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; }
+.settings-three-columns { grid-template-columns:repeat(3,minmax(0,1fr)); }
+.switch-control { margin:0; cursor:pointer; }
+.switch-control input { position:absolute; opacity:0; pointer-events:none; }
+.switch-control span { width:44px; height:24px; padding:3px; display:block; border-radius:99px; background:#d8dfdb; transition:.2s; }
+.switch-control span::after { content:""; width:18px; height:18px; display:block; border-radius:50%; background:#fff; box-shadow:0 2px 6px rgba(0,0,0,.15); transition:.2s; }
+.switch-control input:checked + span { background:var(--primary); }
+.switch-control input:checked + span::after { transform:translateX(20px); }
+
+.pos-checkout-layout { display:grid; grid-template-columns:minmax(0,1.55fr) minmax(320px,.75fr); gap:16px; align-items:stretch; }
+.pos-bill-card,.pos-payment-card { min-width:0; padding:26px; border:1px solid var(--border); border-radius:20px; background:#fff; box-shadow:var(--shadow); }
+.pos-bill-head { display:flex; align-items:flex-start; justify-content:space-between; gap:20px; padding-bottom:18px; border-bottom:1px solid #e8ece9; }
+.pos-bill-head small,.pos-total-label,.payment-section-label { color:var(--muted); font-size:10px; font-weight:600; }
+.pos-bill-head h2 { margin:4px 0 0; color:var(--primary-dark); font-size:22px; }
+.pos-item-list { margin-top:4px; }
+.pos-item-row { padding:17px 0; display:flex; justify-content:space-between; gap:20px; align-items:center; border-bottom:1px solid #e8ece9; }
+.pos-item-row div { min-width:0; display:flex; flex-direction:column; gap:5px; }
+.pos-item-row strong { color:#28332e; font-size:12px; }
+.pos-item-row small { color:#89938e; font-size:9px; }
+.pos-item-row b { flex:0 0 auto; color:#102b24; font:700 13px Manrope,sans-serif; }
+.pos-print-meta { padding-top:18px; display:flex; justify-content:space-between; color:#89938e; font-size:9px; }
+.pos-payment-card { display:flex; flex-direction:column; }
+.pos-total-value { margin:4px 0 18px; color:#102b24; font:800 clamp(30px,3vw,42px) Manrope,sans-serif; letter-spacing:-.04em; }
+.payment-section-label { margin:0 0 8px; }
+.payment-method-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+.payment-method { min-height:43px; margin:0; display:grid; place-items:center; border:1px solid #d8dfdb; border-radius:10px; color:#526059; background:#fff; cursor:pointer; }
+.payment-method input { position:absolute; opacity:0; pointer-events:none; }
+.payment-method span { color:inherit; font-size:10px; font-weight:700; }
+.payment-method.active { border-color:var(--primary); color:var(--primary-dark); background:#edf3ef; }
+.payment-method.disabled { opacity:.45; cursor:not-allowed; }
+.payment-panel { display:none; margin-top:14px; padding:14px; border-radius:13px; background:#f2f5f2; }
+.payment-panel.active { display:block; }
+.cash-change { margin-top:10px; display:flex; align-items:center; justify-content:space-between; color:#64716a; font-size:10px; }
+.cash-change strong { color:#173f35; font-size:15px; }
+.bank-payment-panel { text-align:center; }
+.bank-payment-panel img { width:min(210px,100%); margin:0 auto 10px; border-radius:12px; }
+.bank-transfer-details { display:flex; flex-direction:column; gap:4px; }
+.bank-transfer-details span,.bank-transfer-details small { color:#68756e; font-size:10px; }
+.bank-transfer-details strong { color:#173f35; font-size:12px; }
+.checkout-confirm-btn { width:100%; margin-top:16px; }
+.pos-back-link { margin-top:12px; color:#718079; font-size:10px; text-align:center; }
+
+.report-filter-bar { margin-bottom:16px; padding:13px 16px; display:flex; align-items:end; gap:10px; }
+.report-filter-bar > div { flex:1; }
+.report-filter-bar label { margin-top:0; }
+.report-filter-bar button,.report-filter-bar .btn-light { flex:0 0 auto; }
+.report-main-grid { margin-top:16px; display:grid; grid-template-columns:minmax(0,1.65fr) minmax(280px,.7fr); gap:16px; }
+.report-main-chart { min-height:390px; }
+.payment-breakdown { display:flex; flex-direction:column; gap:11px; }
+.payment-breakdown-row { padding:13px; border:1px solid var(--border); border-radius:12px; background:#f7f9f7; }
+.payment-breakdown-row div { display:flex; justify-content:space-between; gap:10px; }
+.payment-breakdown-row span { color:#65716b; font-size:10px; }
+.payment-breakdown-row strong { color:#173f35; font-size:12px; }
+.payment-breakdown-row i { height:5px; margin-top:9px; display:block; overflow:hidden; border-radius:99px; background:#dfe6e2; }
+.payment-breakdown-row i::after { content:""; width:var(--w); height:100%; display:block; border-radius:inherit; background:#173f35; }
+.report-secondary-grid { margin-top:16px; display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+.owner-dashboard-grid { margin-top:16px; display:grid; grid-template-columns:minmax(0,1.55fr) minmax(300px,.7fr); gap:16px; }
+.owner-revenue-chart .chart-canvas-wrap { min-height:320px; }
+.owner-transaction-list { display:flex; flex-direction:column; }
+.owner-transaction { padding:13px 0; display:flex; align-items:center; justify-content:space-between; gap:15px; border-bottom:1px solid #e8ece9; }
+.owner-transaction:last-child { border-bottom:0; }
+.owner-transaction span { color:#35423b; font-size:11px; font-weight:600; }
+.owner-transaction small { margin-top:4px; display:block; color:#89938e; font-size:8px; font-weight:500; }
+.owner-transaction strong { color:#173f35; font:700 12px Manrope,sans-serif; white-space:nowrap; }
+.cashier-payment-metrics { grid-template-columns:repeat(4,minmax(0,1fr)); }
+.section-title-row { margin:28px 0 14px; display:flex; align-items:end; justify-content:space-between; gap:18px; }
+.section-title-row h2 { margin:0; color:#102b24; font-size:20px; }
+.section-title-row p { margin:5px 0 0; color:#7b8781; font-size:10px; }
+.kitchen-order-card.is-late { border-color:#d9a59f; box-shadow:inset 3px 0 #b84a45,0 8px 24px rgba(16,43,36,.06); }
+.kitchen-order-card.is-late .kitchen-time { color:#a9443f; }
+.shift-metrics { grid-template-columns:repeat(4,minmax(0,1fr)); }
+.order-toolbar { margin:24px 0 12px; display:flex; align-items:center; justify-content:space-between; gap:14px; }
+.order-filter-chips { display:flex; gap:7px; overflow-x:auto; }
+.order-filter-chips a { flex:0 0 auto; padding:9px 12px; border:1px solid var(--border); border-radius:99px; color:#637069; background:#fff; font-size:9px; font-weight:700; }
+.order-filter-chips a.active { border-color:#173f35; color:#fff; background:#173f35; }
+.order-row-actions { display:flex; align-items:center; gap:6px; }
+.order-row-actions form { display:flex; align-items:center; gap:5px; }
+.order-row-actions select { min-width:110px; min-height:38px; padding:7px; }
+.order-row-actions button,.order-row-actions .btn-light { min-height:38px; padding:8px 10px; white-space:nowrap; }
+
+@media (max-width:980px) {
+    .pos-checkout-layout,.report-main-grid,.owner-dashboard-grid { grid-template-columns:1fr; }
+    .settings-three-columns { grid-template-columns:1fr; }
+    .cashier-payment-metrics { grid-template-columns:repeat(2,minmax(0,1fr)); }
+    .shift-metrics { grid-template-columns:repeat(2,minmax(0,1fr)); }
+}
+@media (max-width:700px) {
+    .settings-layout,.settings-two-columns,.report-secondary-grid { grid-template-columns:1fr; }
+    .settings-wide { grid-column:auto; }
+    .report-filter-bar { align-items:stretch; flex-direction:column; }
+    .report-filter-bar > *, .report-filter-bar button,.report-filter-bar .btn-light { width:100%; }
+    .pos-bill-card,.pos-payment-card { padding:18px; border-radius:16px; }
+    .pos-item-row { align-items:flex-start; }
+    .cashier-payment-metrics { grid-template-columns:1fr; }
+    .section-title-row { align-items:flex-start; flex-direction:column; }
+    .shift-metrics { grid-template-columns:1fr; }
+    .order-toolbar { align-items:stretch; flex-direction:column; }
+}
+
+@media print {
+    .role-sidebar,.no-print { display:none !important; }
+    .admin-layout { display:block !important; }
+    .admin-content { max-width:none !important; padding:0 !important; }
+    .pos-checkout-layout { display:block !important; }
+    .pos-bill-card { padding:0 !important; border:0 !important; box-shadow:none !important; }
+}

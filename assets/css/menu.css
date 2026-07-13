@@ -1074,3 +1074,17 @@ h1,h2,h3,.food-price { font-family:Manrope,"Be Vietnam Pro",sans-serif; }
     .hero-panel h2 { font-size:28px; }
     .food-grid { gap:14px; }
 }
+
+/* Keep menu and AI order actions legible after the premium theme override. */
+.primary-cta,
+.primary-cta *,
+.food-actions button,
+.food-actions button *,
+#foodie-chatbot button,
+#foodie-chatbot button *,
+.chat-input button,
+.chat-input button *,
+.ai-set-box button,
+.ai-set-box button * {
+    color:#fff !important;
+}

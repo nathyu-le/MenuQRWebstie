@@ -725,6 +725,13 @@ h1,h2,h3,.summary-total strong,.line-total { font-family:Manrope,"Be Vietnam Pro
 .qty-control button,.remove-btn { border-color:#dce3df; color:#173f35; background:#f3f6f3; }
 .qty-control button:hover { background:#e4ece7; }
 .summary-total { border-color:#d9e1dc; color:#fff; background:#102b24; }
+.summary-total span {
+    color:#f4eadb;
+}
+.summary-total strong {
+    color:#fff;
+    text-shadow:0 1px 1px rgba(0,0,0,.12);
+}
 .summary-actions .primary-btn,.popup-content button:first-of-type { background:#173f35; }
 .popup { background:rgba(8,24,19,.63); backdrop-filter:blur(8px); }
 .popup-content { border-color:#dde3df; background:#fffefd; box-shadow:0 30px 90px rgba(10,31,24,.25); }
@@ -742,4 +749,19 @@ h1,h2,h3,.summary-total strong,.line-total { font-family:Manrope,"Be Vietnam Pro
     .cart-nav-actions { grid-template-columns:1fr; }
     .table-pill { grid-column:auto; }
     .cart-item { padding:14px; }
+}
+
+/* Ensure totals and submit-order actions stay readable on dark surfaces. */
+.summary-total,
+.summary-total span,
+.summary-total strong,
+.summary-actions .primary-btn,
+.summary-actions .primary-btn *,
+.popup-content button:first-of-type,
+.popup-content button:first-of-type * {
+    color:#fff;
+}
+
+.summary-total span {
+    color:#f4eadb;
 }

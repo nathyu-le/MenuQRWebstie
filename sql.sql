@@ -136,6 +136,8 @@ CREATE TABLE IF NOT EXISTS thanh_toan (
     ca_id INT NULL,
     tong_tien DECIMAL(12,2) NOT NULL,
     phuong_thuc ENUM('tien_mat', 'chuyen_khoan', 'the', 'khac') NOT NULL DEFAULT 'tien_mat',
+    ma_tham_chieu VARCHAR(100) NULL,
+    ghi_chu VARCHAR(255) NULL,
     collected_by INT NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_thanh_toan_ban
@@ -145,6 +147,33 @@ CREATE TABLE IF NOT EXISTS thanh_toan (
     CONSTRAINT fk_thanh_toan_user
         FOREIGN KEY (collected_by) REFERENCES admin(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Bổ sung dữ liệu đối soát cho database phiên bản cũ.
+SET @has_payment_reference = (
+    SELECT COUNT(*) FROM information_schema.COLUMNS
+    WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'thanh_toan' AND COLUMN_NAME = 'ma_tham_chieu'
+);
+SET @payment_reference_sql = IF(
+    @has_payment_reference = 0,
+    'ALTER TABLE thanh_toan ADD COLUMN ma_tham_chieu VARCHAR(100) NULL AFTER phuong_thuc',
+    'SELECT 1'
+);
+PREPARE payment_reference_stmt FROM @payment_reference_sql;
+EXECUTE payment_reference_stmt;
+DEALLOCATE PREPARE payment_reference_stmt;
+
+SET @has_payment_note = (
+    SELECT COUNT(*) FROM information_schema.COLUMNS
+    WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'thanh_toan' AND COLUMN_NAME = 'ghi_chu'
+);
+SET @payment_note_sql = IF(
+    @has_payment_note = 0,
+    'ALTER TABLE thanh_toan ADD COLUMN ghi_chu VARCHAR(255) NULL AFTER ma_tham_chieu',
+    'SELECT 1'
+);
+PREPARE payment_note_stmt FROM @payment_note_sql;
+EXECUTE payment_note_stmt;
+DEALLOCATE PREPARE payment_note_stmt;
 
 -- =========================================================
 -- MÓN ĂN
@@ -250,6 +279,15 @@ CREATE TABLE IF NOT EXISTS settings (
     setting_value TEXT NULL,
     updated_at TIMESTAMP NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Cấu hình thanh toán mặc định; chủ quán chỉnh lại trong trang Cài đặt.
+INSERT IGNORE INTO settings (setting_key, setting_value) VALUES
+('bank_transfer_enabled', '0'),
+('bank_code', ''),
+('bank_account_number', ''),
+('bank_account_name', ''),
+('bank_transfer_prefix', 'FOODIE'),
+('bank_qr_template', 'compact2');
 
 -- =========================================================
 -- TÀI KHOẢN KHỞI TẠO

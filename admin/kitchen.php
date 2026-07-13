@@ -55,13 +55,14 @@ function render_kitchen_cards(array $orders, string $status): void
     }
 
     foreach ($orders as $order) {
-        echo '<div class="kitchen-order-card">';
+        $elapsedMinutes = max(0, (int) floor((time() - strtotime($order['created_at'])) / 60));
+        echo '<div class="kitchen-order-card ' . ($elapsedMinutes >= 20 && $status !== 'da_xong' ? 'is-late' : '') . '">';
         echo '<div class="kitchen-order-top">';
         echo '<div>';
         echo '<div class="kitchen-table">Bàn ' . htmlspecialchars($order['so_ban']) . '</div>';
         echo '<div class="kitchen-order-code">' . htmlspecialchars($order['ma_don']) . '</div>';
         echo '</div>';
-        echo '<div class="kitchen-time">' . htmlspecialchars(date('H:i d/m', strtotime($order['created_at']))) . '</div>';
+        echo '<div class="kitchen-time">' . $elapsedMinutes . ' phút</div>';
         echo '</div>';
 
         echo '<div class="kitchen-order-body">';

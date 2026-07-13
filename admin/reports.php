@@ -1,401 +1,94 @@
 <?php
 session_start();
-
 require_once __DIR__ . '/../../app/config/database.php';
 require_once __DIR__ . '/../../app/helpers/auth.php';
-
 require_roles(['owner', 'manager', 'cashier']);
 
 $from = $_GET['from'] ?? date('Y-m-01');
 $to = $_GET['to'] ?? date('Y-m-d');
+if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $from)) $from = date('Y-m-01');
+if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $to)) $to = date('Y-m-d');
+if ($from > $to) [$from, $to] = [$to, $from];
 
-/*
-|--------------------------------------------------------------------------
-| Summary
-|--------------------------------------------------------------------------
-*/
-$stmt = $pdo->prepare("
-    SELECT 
-        COUNT(*) AS total_paid_orders,
-        COALESCE(SUM(tong_tien), 0) AS total_revenue
-    FROM don_hang
-    WHERE trang_thai = 'da_thanh_toan'
-      AND DATE(created_at) BETWEEN ? AND ?
-");
-
+$stmt = $pdo->prepare("SELECT COUNT(*) so_lan_thanh_toan,COALESCE(SUM(tong_tien),0) doanh_thu FROM thanh_toan WHERE DATE(created_at) BETWEEN ? AND ?");
 $stmt->execute([$from, $to]);
 $summary = $stmt->fetch();
+$paymentCount = (int) ($summary['so_lan_thanh_toan'] ?? 0);
+$totalRevenue = (float) ($summary['doanh_thu'] ?? 0);
+$avgPayment = $paymentCount ? $totalRevenue / $paymentCount : 0;
 
-$totalPaidOrders = (int) ($summary['total_paid_orders'] ?? 0);
-$totalRevenue = (float) ($summary['total_revenue'] ?? 0);
-$avgOrderValue = $totalPaidOrders > 0 ? $totalRevenue / $totalPaidOrders : 0;
+$stmt = $pdo->prepare("SELECT COALESCE(SUM(CASE WHEN loai='chi' THEN so_tien ELSE 0 END),0) tong_chi,COALESCE(SUM(CASE WHEN loai='thu' THEN so_tien ELSE 0 END),0) thu_khac FROM thu_chi WHERE DATE(created_at) BETWEEN ? AND ?");
+$stmt->execute([$from, $to]);
+$cashFlow = $stmt->fetch();
+$totalExpense = (float) ($cashFlow['tong_chi'] ?? 0);
+$otherIncome = (float) ($cashFlow['thu_khac'] ?? 0);
+$netCashFlow = $totalRevenue + $otherIncome - $totalExpense;
 
-/*
-|--------------------------------------------------------------------------
-| Revenue by day
-|--------------------------------------------------------------------------
-*/
-$stmt = $pdo->prepare("
-    SELECT 
-        DATE(created_at) AS ngay,
-        COUNT(*) AS so_don,
-        COALESCE(SUM(tong_tien), 0) AS doanh_thu
-    FROM don_hang
-    WHERE trang_thai = 'da_thanh_toan'
-      AND DATE(created_at) BETWEEN ? AND ?
-    GROUP BY DATE(created_at)
-    ORDER BY ngay ASC
-");
-
+$stmt = $pdo->prepare("SELECT DATE(created_at) ngay,COUNT(*) so_giao_dich,COALESCE(SUM(tong_tien),0) doanh_thu FROM thanh_toan WHERE DATE(created_at) BETWEEN ? AND ? GROUP BY DATE(created_at) ORDER BY ngay");
 $stmt->execute([$from, $to]);
 $dailyRows = $stmt->fetchAll();
+$revenueLabels = array_map(function ($r) { return date('d/m', strtotime($r['ngay'])); }, $dailyRows);
+$revenueData = array_map(function ($r) { return (float) $r['doanh_thu']; }, $dailyRows);
 
-$revenueLabels = [];
-$revenueData = [];
-$orderCountData = [];
+$stmt = $pdo->prepare("SELECT phuong_thuc,COUNT(*) so_giao_dich,COALESCE(SUM(tong_tien),0) doanh_thu FROM thanh_toan WHERE DATE(created_at) BETWEEN ? AND ? GROUP BY phuong_thuc ORDER BY doanh_thu DESC");
+$stmt->execute([$from, $to]);
+$paymentRows = $stmt->fetchAll();
+$methodLabels = ['tien_mat'=>'Tiền mặt','chuyen_khoan'=>'Chuyển khoản','the'=>'Thẻ','khac'=>'Khác'];
 
-foreach ($dailyRows as $row) {
-    $revenueLabels[] = date('d/m', strtotime($row['ngay']));
-    $revenueData[] = (float) $row['doanh_thu'];
-    $orderCountData[] = (int) $row['so_don'];
-}
-
-/*
-|--------------------------------------------------------------------------
-| Top foods
-|--------------------------------------------------------------------------
-*/
-$stmt = $pdo->prepare("
-    SELECT 
-        ctdh.ten_mon,
-        SUM(ctdh.so_luong) AS tong_so_luong,
-        SUM(ctdh.thanh_tien) AS tong_doanh_thu
-    FROM chi_tiet_don_hang ctdh
-    JOIN don_hang dh ON ctdh.don_hang_id = dh.id
-    WHERE dh.trang_thai = 'da_thanh_toan'
-      AND DATE(dh.created_at) BETWEEN ? AND ?
-    GROUP BY ctdh.mon_an_id, ctdh.ten_mon
-    ORDER BY tong_so_luong DESC
-    LIMIT 10
-");
-
+$stmt = $pdo->prepare("SELECT c.ten_mon,SUM(c.so_luong) tong_so_luong,SUM(c.thanh_tien) tong_doanh_thu FROM chi_tiet_don_hang c JOIN don_hang d ON d.id=c.don_hang_id WHERE d.trang_thai='da_thanh_toan' AND DATE(d.updated_at) BETWEEN ? AND ? GROUP BY c.mon_an_id,c.ten_mon ORDER BY tong_so_luong DESC LIMIT 8");
 $stmt->execute([$from, $to]);
 $topFoods = $stmt->fetchAll();
-
-$topFoodLabels = [];
-$topFoodQty = [];
-
-foreach ($topFoods as $food) {
-    $topFoodLabels[] = $food['ten_mon'];
-    $topFoodQty[] = (int) $food['tong_so_luong'];
-}
-
-/*
-|--------------------------------------------------------------------------
-| Revenue by category
-|--------------------------------------------------------------------------
-*/
-$stmt = $pdo->prepare("
-    SELECT 
-        COALESCE(ma.danh_muc, 'Khác') AS danh_muc,
-        COALESCE(SUM(ctdh.thanh_tien), 0) AS doanh_thu
-    FROM chi_tiet_don_hang ctdh
-    JOIN don_hang dh ON ctdh.don_hang_id = dh.id
-    LEFT JOIN mon_an ma ON ctdh.mon_an_id = ma.id
-    WHERE dh.trang_thai = 'da_thanh_toan'
-      AND DATE(dh.created_at) BETWEEN ? AND ?
-    GROUP BY ma.danh_muc
-    ORDER BY doanh_thu DESC
-");
-
-$stmt->execute([$from, $to]);
-$categoryRows = $stmt->fetchAll();
-
-$categoryLabels = [];
-$categoryRevenue = [];
-
-foreach ($categoryRows as $row) {
-    $categoryLabels[] = $row['danh_muc'];
-    $categoryRevenue[] = (float) $row['doanh_thu'];
-}
-
-$bestFoodName = !empty($topFoods) ? $topFoods[0]['ten_mon'] : '--';
+$topFoodLabels = array_map(function ($r) { return $r['ten_mon']; }, $topFoods);
+$topFoodQty = array_map(function ($r) { return (int) $r['tong_so_luong']; }, $topFoods);
+$bestFoodName = $topFoods ? $topFoods[0]['ten_mon'] : 'Chưa có dữ liệu';
+$activePage = 'reports';
 ?>
-
 <!DOCTYPE html>
 <html lang="vi">
-<head>
-    <meta charset="UTF-8">
-    <title>Báo cáo doanh thu - Foodie AI</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <link rel="stylesheet" href="/assets/css/style.css?v=<?= time() ?>">
-</head>
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Báo cáo kinh doanh</title><link rel="stylesheet" href="/assets/css/style.css?v=<?= time() ?>"></head>
 <body>
-
 <div class="admin-layout">
-    <?php $activePage = 'reports'; require __DIR__ . '/_sidebar.php'; ?>
-    <aside class="admin-sidebar" style="display:none">
-        <h2>Foodie AI</h2>
-        <p><?= htmlspecialchars($_SESSION['admin_username'] ?? 'Admin') ?></p>
+<?php require __DIR__ . '/_sidebar.php'; ?>
+<main class="admin-content">
+    <div class="role-page-header clean-page-header"><div><p class="role-page-kicker">Phân tích vận hành</p><h1>Báo cáo kinh doanh</h1><p>Doanh thu, dòng tiền và món bán chạy trong một màn hình.</p></div><div class="online-indicator"><i></i> Dữ liệu trực tiếp</div></div>
 
-        <a href="/admin/dashboard.php">Dashboard Order</a>
-        <a href="/admin/kitchen.php">Màn hình bếp</a>
-        <a href="/admin/menu.php">Quản lý menu</a>
-        <a href="/admin/tables.php">Quản lý bàn + QR</a>
-        <a href="/admin/reports.php" class="active">Báo cáo</a>
-        <a href="/admin/chat_history.php">Lịch sử AI</a>
-        <a href="/admin/settings.php">Settings AI</a>
-        <a href="/admin/logout.php">Đăng xuất</a>
-    </aside>
+    <form method="GET" class="form-card report-filter-bar">
+        <div><label>Từ ngày</label><input type="date" name="from" value="<?= htmlspecialchars($from) ?>"></div>
+        <div><label>Đến ngày</label><input type="date" name="to" value="<?= htmlspecialchars($to) ?>"></div>
+        <button type="submit">Áp dụng</button><a class="btn-light" href="/admin/reports.php">Tháng này</a>
+    </form>
 
-    <main class="admin-content">
-        <h1>Báo cáo doanh thu</h1>
+    <div class="metrics-grid owner-metric-grid">
+        <div class="metric-card"><div class="metric-label">Doanh thu</div><div class="metric-value"><?= number_format($totalRevenue,0,',','.') ?>đ</div><div class="metric-sub"><?= number_format($paymentCount) ?> lần thanh toán</div></div>
+        <div class="metric-card"><div class="metric-label">Giá trị hóa đơn TB</div><div class="metric-value"><?= number_format($avgPayment,0,',','.') ?>đ</div><div class="metric-sub">Tính theo lượt thanh toán bàn</div></div>
+        <div class="metric-card"><div class="metric-label">Tổng chi</div><div class="metric-value expense"><?= number_format($totalExpense,0,',','.') ?>đ</div><div class="metric-sub">Chi phí đã ghi trong sổ</div></div>
+        <div class="metric-card"><div class="metric-label">Dòng tiền ròng</div><div class="metric-value"><?= number_format($netCashFlow,0,',','.') ?>đ</div><div class="metric-sub">Doanh thu + thu khác − chi</div></div>
+    </div>
 
-        <form method="GET" class="form-card">
-            <h3>Bộ lọc thời gian</h3>
+    <div class="report-main-grid">
+        <section class="chart-card report-main-chart"><div class="settings-card-head"><div><h3>Xu hướng doanh thu</h3></div><span><?= date('d/m/Y',strtotime($from)) ?> – <?= date('d/m/Y',strtotime($to)) ?></span></div><div class="chart-canvas-wrap"><canvas id="revenueChart"></canvas></div></section>
+        <section class="chart-card"><div class="settings-card-head"><div><h3>Phương thức thanh toán</h3></div><span><?= number_format($paymentCount) ?> giao dịch</span></div><div class="payment-breakdown">
+            <?php if (!$paymentRows): ?><p class="empty-box">Chưa có thanh toán.</p><?php endif; ?>
+            <?php foreach ($paymentRows as $row): $percent=$totalRevenue>0?((float)$row['doanh_thu']/$totalRevenue*100):0; ?>
+            <div class="payment-breakdown-row"><div><span><?= htmlspecialchars($methodLabels[$row['phuong_thuc']] ?? $row['phuong_thuc']) ?> · <?= (int)$row['so_giao_dich'] ?> lần</span><strong><?= number_format((float)$row['doanh_thu'],0,',','.') ?>đ</strong></div><i style="--w:<?= round($percent,1) ?>%"></i></div>
+            <?php endforeach; ?>
+        </div></section>
+    </div>
 
-            <label>Từ ngày</label>
-            <input type="date" name="from" value="<?= htmlspecialchars($from) ?>">
-
-            <label>Đến ngày</label>
-            <input type="date" name="to" value="<?= htmlspecialchars($to) ?>">
-<br>
-<br>
-            <button type="submit">Xem báo cáo</button>
-            <a class="btn-light" href="/admin/reports.php">Tháng này</a>
-        </form>
-<br>
-<br>
-        <div class="metrics-grid">
-            <div class="metric-card">
-                <div class="metric-label">Tổng doanh thu</div>
-                <div class="metric-value"><?= number_format($totalRevenue, 0, ',', '.') ?>đ</div>
-                <div class="metric-sub">Tính theo đơn đã thanh toán</div>
-            </div>
-
-            <div class="metric-card">
-                <div class="metric-label">Tổng đơn đã thanh toán</div>
-                <div class="metric-value"><?= number_format($totalPaidOrders) ?></div>
-                <div class="metric-sub">Số đơn trong khoảng thời gian chọn</div>
-            </div>
-
-            <div class="metric-card">
-                <div class="metric-label">Giá trị đơn trung bình</div>
-                <div class="metric-value"><?= number_format($avgOrderValue, 0, ',', '.') ?>đ</div>
-                <div class="metric-sub">Average Order Value</div>
-            </div>
-
-            <div class="metric-card">
-                <div class="metric-label">Món bán chạy nhất</div>
-                <div class="metric-value"><?= htmlspecialchars($bestFoodName) ?></div>
-                <div class="metric-sub">Dựa trên số lượng bán</div>
-            </div>
-        </div>
-
-        <div class="charts-grid">
-            <div class="chart-card">
-                <h3>Doanh thu theo ngày</h3>
-                <div class="chart-canvas-wrap">
-                    <canvas id="revenueChart"></canvas>
-                </div>
-            </div>
-
-            <div class="chart-card">
-                <h3>Số đơn theo ngày</h3>
-                <div class="chart-canvas-wrap">
-                    <canvas id="orderChart"></canvas>
-                </div>
-            </div>
-        </div>
-
-        <div class="charts-grid">
-            <div class="chart-card">
-                <h3>Top món bán chạy</h3>
-                <div class="chart-canvas-wrap">
-                    <canvas id="foodChart"></canvas>
-                </div>
-            </div>
-
-            <div class="chart-card">
-                <h3>Doanh thu theo danh mục</h3>
-                <div class="chart-canvas-wrap">
-                    <canvas id="categoryChart"></canvas>
-                </div>
-            </div>
-        </div>
-
-        <div class="table-card">
-            <h3>Chi tiết top món bán chạy</h3>
-
-            <table class="table">
-                <tr>
-                    <th>Tên món</th>
-                    <th>Số lượng bán</th>
-                    <th>Doanh thu</th>
-                </tr>
-
-                <?php foreach ($topFoods as $food): ?>
-                    <tr>
-                        <td><?= htmlspecialchars($food['ten_mon']) ?></td>
-                        <td><?= number_format((int) $food['tong_so_luong']) ?></td>
-                        <td><?= number_format((float) $food['tong_doanh_thu'], 0, ',', '.') ?>đ</td>
-                    </tr>
-                <?php endforeach; ?>
-
-                <?php if (empty($topFoods)): ?>
-                    <tr>
-                        <td colspan="3">Chưa có dữ liệu món bán chạy.</td>
-                    </tr>
-                <?php endif; ?>
-            </table>
-        </div>
-
-        <div class="table-card" style="margin-top: 22px;">
-            <h3>Doanh thu theo ngày</h3>
-
-            <table class="table">
-                <tr>
-                    <th>Ngày</th>
-                    <th>Số đơn</th>
-                    <th>Doanh thu</th>
-                </tr>
-
-                <?php foreach (array_reverse($dailyRows) as $row): ?>
-                    <tr>
-                        <td><?= htmlspecialchars(date('d/m/Y', strtotime($row['ngay']))) ?></td>
-                        <td><?= number_format((int) $row['so_don']) ?></td>
-                        <td><?= number_format((float) $row['doanh_thu'], 0, ',', '.') ?>đ</td>
-                    </tr>
-                <?php endforeach; ?>
-
-                <?php if (empty($dailyRows)): ?>
-                    <tr>
-                        <td colspan="3">Chưa có dữ liệu doanh thu.</td>
-                    </tr>
-                <?php endif; ?>
-            </table>
-        </div>
-    </main>
+    <div class="report-secondary-grid">
+        <section class="chart-card"><div class="settings-card-head"><div><h3>Món bán chạy</h3></div><span><?= htmlspecialchars($bestFoodName) ?></span></div><div class="chart-canvas-wrap"><canvas id="foodChart"></canvas></div></section>
+        <section class="table-card"><h3>Hiệu quả theo món</h3><div class="responsive-table"><table class="table"><thead><tr><th>Món</th><th>Đã bán</th><th>Doanh thu</th></tr></thead><tbody>
+            <?php if (!$topFoods): ?><tr><td colspan="3">Chưa có dữ liệu.</td></tr><?php endif; ?>
+            <?php foreach ($topFoods as $food): ?><tr><td><strong><?= htmlspecialchars($food['ten_mon']) ?></strong></td><td><?= number_format((int)$food['tong_so_luong']) ?></td><td><?= number_format((float)$food['tong_doanh_thu'],0,',','.') ?>đ</td></tr><?php endforeach; ?>
+        </tbody></table></div></section>
+    </div>
+</main>
 </div>
-
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
 <script>
-const revenueLabels = <?= json_encode($revenueLabels, JSON_UNESCAPED_UNICODE) ?>;
-const revenueData = <?= json_encode($revenueData, JSON_UNESCAPED_UNICODE) ?>;
-const orderCountData = <?= json_encode($orderCountData, JSON_UNESCAPED_UNICODE) ?>;
-const topFoodLabels = <?= json_encode($topFoodLabels, JSON_UNESCAPED_UNICODE) ?>;
-const topFoodQty = <?= json_encode($topFoodQty, JSON_UNESCAPED_UNICODE) ?>;
-const categoryLabels = <?= json_encode($categoryLabels, JSON_UNESCAPED_UNICODE) ?>;
-const categoryRevenue = <?= json_encode($categoryRevenue, JSON_UNESCAPED_UNICODE) ?>;
-
-const blue = '#1e88e5';
-const blueDark = '#1565c0';
-const blueLight = 'rgba(30, 136, 229, 0.16)';
-
-new Chart(document.getElementById('revenueChart'), {
-    type: 'line',
-    data: {
-        labels: revenueLabels,
-        datasets: [{
-            label: 'Doanh thu',
-            data: revenueData,
-            borderColor: blue,
-            backgroundColor: blueLight,
-            fill: true,
-            tension: 0.35,
-            pointRadius: 4,
-            pointBackgroundColor: blueDark
-        }]
-    },
-    options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-            legend: {
-                display: true
-            },
-            tooltip: {
-                callbacks: {
-                    label: function(context) {
-                        return Number(context.raw).toLocaleString('vi-VN') + 'đ';
-                    }
-                }
-            }
-        },
-        scales: {
-            y: {
-                ticks: {
-                    callback: function(value) {
-                        return Number(value).toLocaleString('vi-VN') + 'đ';
-                    }
-                }
-            }
-        }
-    }
-});
-
-new Chart(document.getElementById('orderChart'), {
-    type: 'bar',
-    data: {
-        labels: revenueLabels,
-        datasets: [{
-            label: 'Số đơn',
-            data: orderCountData,
-            backgroundColor: '#42a5f5',
-            borderRadius: 10
-        }]
-    },
-    options: {
-        responsive: true,
-        maintainAspectRatio: false
-    }
-});
-
-new Chart(document.getElementById('foodChart'), {
-    type: 'bar',
-    data: {
-        labels: topFoodLabels,
-        datasets: [{
-            label: 'Số lượng bán',
-            data: topFoodQty,
-            backgroundColor: ['#0d47a1', '#1565c0', '#1e88e5', '#42a5f5', '#90caf9', '#bbdefb'],
-            borderRadius: 10
-        }]
-    },
-    options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        indexAxis: 'y'
-    }
-});
-
-new Chart(document.getElementById('categoryChart'), {
-    type: 'doughnut',
-    data: {
-        labels: categoryLabels,
-        datasets: [{
-            label: 'Doanh thu',
-            data: categoryRevenue,
-            backgroundColor: ['#0d47a1', '#1565c0', '#1e88e5', '#42a5f5', '#90caf9', '#bbdefb']
-        }]
-    },
-    options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-            tooltip: {
-                callbacks: {
-                    label: function(context) {
-                        return context.label + ': ' + Number(context.raw).toLocaleString('vi-VN') + 'đ';
-                    }
-                }
-            }
-        }
-    }
-});
+Chart.defaults.font.family='Be Vietnam Pro'; Chart.defaults.color='#718079';
+const green='#173f35', grid='rgba(23,63,53,.08)';
+new Chart(document.getElementById('revenueChart'),{type:'line',data:{labels:<?= json_encode($revenueLabels,JSON_UNESCAPED_UNICODE) ?>,datasets:[{data:<?= json_encode($revenueData) ?>,borderColor:green,backgroundColor:'rgba(23,63,53,.08)',fill:true,tension:.42,borderWidth:3,pointRadius:2,pointHoverRadius:5}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:function(c){return Number(c.raw).toLocaleString('vi-VN')+'đ'}}}},scales:{x:{grid:{display:false}},y:{beginAtZero:true,grid:{color:grid},ticks:{callback:function(v){return (v/1000000).toLocaleString('vi-VN')+'tr'}}}}}});
+new Chart(document.getElementById('foodChart'),{type:'bar',data:{labels:<?= json_encode($topFoodLabels,JSON_UNESCAPED_UNICODE) ?>,datasets:[{data:<?= json_encode($topFoodQty) ?>,backgroundColor:green,borderRadius:7,barThickness:15}]},options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{beginAtZero:true,grid:{color:grid}},y:{grid:{display:false}}}}});
 </script>
-
-</body>
-</html>
+</body></html>
