@@ -7,11 +7,12 @@ error_reporting(E_ALL);
 require_once __DIR__ . '/../../app/config/database.php';
 require_once __DIR__ . '/../../app/helpers/auth.php';
 
-require_admin_login();
+require_roles(['owner', 'manager']);
 
 $status = trim($_GET['status'] ?? '');
 
 $allowedStatus = ['moi', 'dang_lam', 'da_xong', 'da_thanh_toan', 'huy'];
+$editableStatus = ['moi', 'dang_lam', 'da_xong', 'huy'];
 
 function get_status_text($status)
 {
@@ -117,7 +118,8 @@ try {
 <body>
 
 <div class="admin-layout">
-    <aside class="admin-sidebar">
+    <?php $activePage = 'dashboard'; require __DIR__ . '/_sidebar.php'; ?>
+    <aside class="admin-sidebar" style="display:none">
         <h2>Foodie AI</h2>
         <p><?= htmlspecialchars($_SESSION['admin_username'] ?? 'Admin') ?></p>
 
@@ -243,11 +245,12 @@ try {
                                 </td>
 
                                 <td>
+                                    <?php if (!in_array($order['trang_thai'], ['da_thanh_toan', 'huy'], true)): ?>
                                     <form method="POST" action="/admin/order_update.php">
                                         <input type="hidden" name="id" value="<?= (int) $order['id'] ?>">
 
                                         <select name="trang_thai">
-                                            <?php foreach ($allowedStatus as $st): ?>
+                                            <?php foreach ($editableStatus as $st): ?>
                                                 <option 
                                                     value="<?= htmlspecialchars($st) ?>" 
                                                     <?= $order['trang_thai'] === $st ? 'selected' : '' ?>
@@ -259,6 +262,7 @@ try {
 
                                         <button type="submit">Lưu</button>
                                     </form>
+                                    <?php else: ?><span class="muted">Đã khóa</span><?php endif; ?>
                                 </td>
                                 <td>
     <a class="btn-light" href="/admin/invoice_table.php?ban_id=<?= (int) $order['ban_id'] ?>">

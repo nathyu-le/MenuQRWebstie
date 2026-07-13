@@ -7,7 +7,7 @@ error_reporting(E_ALL);
 require_once __DIR__ . '/../../app/config/database.php';
 require_once __DIR__ . '/../../app/helpers/auth.php';
 
-require_admin_login();
+require_roles(['owner', 'manager', 'cashier']);
 
 $orderId = (int) ($_GET['id'] ?? 0);
 
@@ -69,7 +69,8 @@ function status_class($status)
     return 'status-badge status-' . htmlspecialchars($status);
 }
 
-$canPay = !in_array($order['trang_thai'], ['da_thanh_toan', 'huy'], true);
+$canPay = false;
+$canAccessCheckout = has_admin_role(['owner', 'manager', 'cashier']);
 ?>
 
 <!DOCTYPE html>
@@ -111,7 +112,8 @@ $canPay = !in_array($order['trang_thai'], ['da_thanh_toan', 'huy'], true);
 <body>
 
 <div class="admin-layout">
-    <aside class="admin-sidebar no-print">
+    <?php $activePage = current_admin_role() === 'kitchen' ? 'kitchen' : (current_admin_role() === 'cashier' ? 'cashier' : 'dashboard'); require __DIR__ . '/_sidebar.php'; ?>
+    <aside class="admin-sidebar no-print" style="display:none">
         <h2>Foodie AI</h2>
         <p><?= htmlspecialchars($_SESSION['admin_username'] ?? 'Admin') ?></p>
 
@@ -226,6 +228,7 @@ $canPay = !in_array($order['trang_thai'], ['da_thanh_toan', 'huy'], true);
 
                 <a 
                     class="btn-light" 
+                    style="<?= $canAccessCheckout ? '' : 'display:none' ?>"
                     href="/admin/invoice_table.php?ban_id=<?= (int) $order['ban_id'] ?>"
                 >
                     Tính tiền cả bàn

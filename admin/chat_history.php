@@ -3,7 +3,7 @@ session_start();
 require_once __DIR__ . '/../../app/config/database.php';
 require_once __DIR__ . '/../../app/helpers/auth.php';
 
-require_admin_login();
+require_roles('owner');
 
 $stmt = $pdo->query("
     SELECT ach.*, b.so_ban

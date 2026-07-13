@@ -5,7 +5,7 @@ require_once __DIR__ . '/../../app/config/database.php';
 require_once __DIR__ . '/../../app/helpers/auth.php';
 require_once __DIR__ . '/../../app/services/SettingService.php';
 
-require_admin_login();
+require_roles(['owner', 'manager']);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $soBan = trim($_POST['so_ban'] ?? '');
@@ -49,7 +49,8 @@ $tables = $stmt->fetchAll();
 <body>
 
 <div class="admin-layout">
-    <aside class="admin-sidebar">
+    <?php $activePage = 'tables'; require __DIR__ . '/_sidebar.php'; ?>
+    <aside class="admin-sidebar" style="display:none">
         <h2>Foodie AI</h2>
         <a href="/admin/dashboard.php">Dashboard Order</a>
         <a href="/admin/kitchen.php">Màn hình bếp</a>

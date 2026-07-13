@@ -4,7 +4,7 @@ session_start();
 require_once __DIR__ . '/../../app/config/database.php';
 require_once __DIR__ . '/../../app/helpers/auth.php';
 
-require_admin_login();
+require_roles(['owner', 'manager', 'cashier']);
 
 $from = $_GET['from'] ?? date('Y-m-01');
 $to = $_GET['to'] ?? date('Y-m-d');
@@ -134,7 +134,8 @@ $bestFoodName = !empty($topFoods) ? $topFoods[0]['ten_mon'] : '--';
 <body>
 
 <div class="admin-layout">
-    <aside class="admin-sidebar">
+    <?php $activePage = 'reports'; require __DIR__ . '/_sidebar.php'; ?>
+    <aside class="admin-sidebar" style="display:none">
         <h2>Foodie AI</h2>
         <p><?= htmlspecialchars($_SESSION['admin_username'] ?? 'Admin') ?></p>
 

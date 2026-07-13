@@ -5,7 +5,7 @@ require_once __DIR__ . '/../../app/config/database.php';
 require_once __DIR__ . '/../../app/helpers/auth.php';
 require_once __DIR__ . '/../../app/services/SettingService.php';
 
-require_admin_login();
+require_roles(['owner', 'manager', 'cashier']);
 
 $id = (int) ($_GET['id'] ?? 0);
 

@@ -1602,3 +1602,120 @@ textarea {
         width: 100%;
     }
 }
+/* =========================================================
+   ROLE BASED WORKSPACE
+========================================================= */
+.role-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    background: #102b24;
+}
+
+.role-sidebar .sidebar-brand {
+    margin: 0 0 22px;
+    color: #fff;
+    font-size: 23px;
+    font-weight: 800;
+}
+
+.role-sidebar .sidebar-brand b { color: #d9ba8b; }
+
+.role-sidebar .sidebar-user {
+    margin-bottom: 24px;
+    padding: 13px;
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    border: 1px solid rgba(255,255,255,.1);
+    border-radius: 14px;
+    background: rgba(255,255,255,.05);
+}
+
+.role-sidebar .sidebar-user > span {
+    width: 35px;
+    height: 35px;
+    display: grid;
+    flex: 0 0 auto;
+    place-items: center;
+    border-radius: 50%;
+    color: #173f35;
+    background: #d9ba8b;
+    font-size: 13px;
+    font-weight: 800;
+}
+
+.role-sidebar .sidebar-user div { min-width: 0; display: flex; flex-direction: column; }
+.role-sidebar .sidebar-user strong { overflow: hidden; color: #fff; font-size: 12px; text-overflow: ellipsis; white-space: nowrap; }
+.role-sidebar .sidebar-user small { color: rgba(255,255,255,.52); font-size: 10px; }
+.role-sidebar nav { display: grid; gap: 5px; }
+.role-sidebar nav a { padding: 11px 13px; border-radius: 10px; color: rgba(255,255,255,.62); font-size: 12px; font-weight: 600; }
+.role-sidebar nav a:hover, .role-sidebar nav a.active { color: #fff; background: rgba(217,186,139,.15); }
+.role-sidebar nav a.active { box-shadow: inset 2px 0 #d9ba8b; }
+.role-sidebar .sidebar-logout { margin-top: auto; padding: 12px 13px; border-top: 1px solid rgba(255,255,255,.1); color: rgba(255,255,255,.58); font-size: 12px; }
+
+.role-page-header { margin-bottom: 28px; display: flex; justify-content: space-between; align-items: center; gap: 25px; }
+.role-page-header h1 { margin: 2px 0 4px; }
+.role-page-header > div > p:last-child { margin: 0; color: #6b7b75; }
+.role-page-kicker { margin: 0; color: #a07844; font-size: 11px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; }
+.role-alert { margin: 0 0 20px; padding: 13px 16px; border-radius: 12px; font-size: 13px; }
+.role-alert.success { color: #216447; background: #e7f4ec; border: 1px solid #c7e5d3; }
+.role-alert.error { color: #9b302f; background: #fdebea; border: 1px solid #f2c5c3; }
+.cashier-metrics { margin-bottom: 25px; grid-template-columns: repeat(3, 1fr); }
+.cashier-table-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; }
+.cashier-table-card { min-height: 220px; padding: 20px; display: flex; flex-direction: column; border: 1px solid #dfe7e2; border-radius: 17px; background: #fff; box-shadow: 0 12px 35px rgba(16,43,36,.06); }
+.cashier-table-card.empty { background: #f6f8f6; box-shadow: none; }
+.cashier-table-top { display: grid; grid-template-columns: 1fr auto; align-items: center; }
+.cashier-table-top > span { color: #7a8580; font-size: 10px; text-transform: uppercase; }
+.cashier-table-top > strong { grid-row: 2; color: #173f35; font-size: 27px; }
+.cashier-table-top i { grid-row: 1 / 3; grid-column: 2; padding: 5px 8px; border-radius: 999px; color: #77827c; background: #e7ebe8; font: normal 700 8px Arial; }
+.cashier-table-top i.processing { color: #8d5b16; background: #fff0d9; }
+.cashier-table-top i.ready { color: #246548; background: #e4f2e9; }
+.cashier-table-info { margin: 18px 0 15px; padding-top: 14px; display: flex; flex-direction: column; border-top: 1px solid #edf0ee; }
+.cashier-table-info span, .cashier-table-card p { color: #78817d; font-size: 11px; }
+.cashier-table-info strong { color: #171916; font-size: 18px; }
+.cashier-table-card .btn { margin-top: auto; align-self: stretch; text-align: center; }
+.users-layout { display: grid; grid-template-columns: 340px 1fr; align-items: start; gap: 22px; }
+.users-layout .form-card { margin: 0; }
+.responsive-table { overflow-x: auto; }
+.role-badge { padding: 5px 9px; border-radius: 999px; font-size: 10px; font-weight: 700; }
+.role-owner { color: #745126; background: #f5e6cf; }
+.role-manager { color: #285778; background: #e1eef6; }
+.role-cashier { color: #246548; background: #e2f1e8; }
+.role-kitchen { color: #8a4e1e; background: #fae9d8; }
+.owner-metric-grid { grid-template-columns: repeat(4, 1fr); }
+.owner-quick-grid { margin: 22px 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+.owner-quick-grid a { padding: 22px; display: flex; flex-direction: column; gap: 8px; border: 1px solid #dfe7e2; border-radius: 16px; color: #173f35; background: #fff; box-shadow: 0 10px 30px rgba(16,43,36,.05); }
+.owner-quick-grid a:hover { border-color: #b8cec4; transform: translateY(-2px); }
+.owner-quick-grid strong { font-size: 15px; }
+.owner-quick-grid span { color: #718079; font-size: 11px; }
+.cashbook-metrics { grid-template-columns: repeat(4, 1fr); }
+.metric-value.income, .money.income { color: #287654; }
+.metric-value.expense, .money.expense { color: #b04440; }
+.cashbook-actions { margin: 22px 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; gap: 18px; }
+.cashbook-actions .form-card { margin: 0; }
+.cashbook-actions form { display: grid; }
+.shift-card > p { color: #718079; font-size: 12px; }
+.shift-opening { margin: 15px 0 20px; padding: 15px; display: flex; justify-content: space-between; border-radius: 12px; color: #5e6c65; background: #edf2ef; }
+.shift-opening strong { color: #173f35; }
+.cashbook-grid { display: grid; gap: 18px; }
+.ledger-type { padding: 5px 8px; border-radius: 999px; font-size: 9px; font-weight: 800; }
+.ledger-type.income { color: #246548; background: #e2f1e8; }
+.ledger-type.expense { color: #9b3834; background: #f9e4e2; }
+.ledger-method { margin-top: 3px; display: block; color: #829089; font-size: 9px; text-transform: capitalize; }
+.money { white-space: nowrap; font-weight: 800; }
+.invoice-actions form select { min-width: 150px; margin-bottom: 8px; }
+
+@media (max-width: 1100px) {
+    .cashier-table-grid { grid-template-columns: repeat(3, 1fr); }
+    .owner-metric-grid { grid-template-columns: repeat(2, 1fr); }
+    .cashbook-metrics { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 760px) {
+    .cashier-metrics, .cashier-table-grid { grid-template-columns: 1fr; }
+    .users-layout { grid-template-columns: 1fr; }
+    .owner-metric-grid, .owner-quick-grid { grid-template-columns: 1fr; }
+    .cashbook-metrics, .cashbook-actions { grid-template-columns: 1fr; }
+    .role-page-header { align-items: flex-start; flex-direction: column; }
+}

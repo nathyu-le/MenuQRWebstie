@@ -7,7 +7,7 @@ error_reporting(E_ALL);
 require_once __DIR__ . '/../../app/config/database.php';
 require_once __DIR__ . '/../../app/helpers/auth.php';
 
-require_admin_login();
+require_roles(['owner', 'manager', 'cashier']);
 
 $banId = (int) ($_GET['ban_id'] ?? 0);
 
@@ -135,7 +135,8 @@ function status_text($status)
 <body>
 
 <div class="admin-layout">
-    <aside class="admin-sidebar no-print">
+    <?php $activePage = 'cashier'; require __DIR__ . '/_sidebar.php'; ?>
+    <aside class="admin-sidebar no-print" style="display:none">
         <h2>Foodie AI</h2>
         <p><?= htmlspecialchars($_SESSION['admin_username'] ?? 'Admin') ?></p>
 
@@ -240,11 +241,18 @@ function status_text($status)
                     <button onclick="window.print()">In hóa đơn</button>
 
                     <form method="POST" action="/admin/table_checkout.php" onsubmit="return confirm('Xác nhận thanh toán toàn bộ đơn của bàn này?')">
+                        <?= csrf_field() ?>
                         <input type="hidden" name="ban_id" value="<?= (int) $ban['id'] ?>">
+                        <select name="phuong_thuc" aria-label="Phương thức thanh toán" required>
+                            <option value="tien_mat">Tiền mặt</option>
+                            <option value="chuyen_khoan">Chuyển khoản</option>
+                            <option value="the">Thẻ</option>
+                            <option value="khac">Khác</option>
+                        </select>
                         <button type="submit">Xác nhận đã thanh toán</button>
                     </form>
 
-                    <a class="btn-light" href="/admin/dashboard.php">Quay lại dashboard</a>
+                    <a class="btn-light" href="<?= htmlspecialchars(role_home()) ?>">Quay lại màn hình làm việc</a>
                 </div>
             <?php else: ?>
                 <div class="empty-box">
@@ -252,7 +260,7 @@ function status_text($status)
                 </div>
 
                 <div class="invoice-actions no-print">
-                    <a class="btn-light" href="/admin/dashboard.php">Quay lại dashboard</a>
+                    <a class="btn-light" href="<?= htmlspecialchars(role_home()) ?>">Quay lại màn hình làm việc</a>
                 </div>
             <?php endif; ?>
         </div>

@@ -7,7 +7,7 @@ error_reporting(E_ALL);
 require_once __DIR__ . '/../../app/config/database.php';
 require_once __DIR__ . '/../../app/helpers/auth.php';
 
-require_admin_login();
+require_roles(['owner', 'manager', 'kitchen']);
 
 function fetch_orders_by_status(PDO $pdo, string $status): array
 {
@@ -78,7 +78,9 @@ function render_kitchen_cards(array $orders, string $status): void
         }
         echo '</ul>';
 
-        echo '<div class="kitchen-total">Tổng: ' . number_format((float)$order['tong_tien'], 0, ',', '.') . 'đ</div>';
+        if (current_admin_role() !== 'kitchen') {
+            echo '<div class="kitchen-total">Tổng: ' . number_format((float)$order['tong_tien'], 0, ',', '.') . 'đ</div>';
+        }
 
         echo '</div>';
 
@@ -95,7 +97,7 @@ function render_kitchen_cards(array $orders, string $status): void
             echo '<input type="hidden" name="trang_thai" value="da_xong">';
             echo '<button type="submit" class="btn kitchen-btn-done">Hoàn tất</button>';
             echo '</form>';
-        } elseif ($status === 'da_xong') {
+        } elseif ($status === 'da_xong' && current_admin_role() !== 'kitchen') {
             echo '<a class="btn-light" href="/admin/order_detail.php?id=' . (int)$order['id'] . '">Xem chi tiết</a>';
         }
         echo '</div>';
@@ -115,7 +117,8 @@ function render_kitchen_cards(array $orders, string $status): void
 <body>
 
 <div class="admin-layout">
-    <aside class="admin-sidebar">
+    <?php $activePage = 'kitchen'; require __DIR__ . '/_sidebar.php'; ?>
+    <aside class="admin-sidebar" style="display:none">
         <h2>Foodie AI</h2>
         <p><?= htmlspecialchars($_SESSION['admin_username'] ?? 'Admin') ?></p>
 

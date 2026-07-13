@@ -1,6 +1,12 @@
 <?php
 session_start();
 require_once __DIR__ . '/../../app/config/database.php';
+require_once __DIR__ . '/../../app/helpers/auth.php';
+
+if (is_admin_logged_in()) {
+    header('Location: ' . role_home());
+    exit;
+}
 
 $error = '';
 
@@ -13,11 +19,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $admin = $stmt->fetch();
 
     if ($admin && password_verify($password, $admin['password'])) {
+        session_regenerate_id(true);
         $_SESSION['admin_id'] = $admin['id'];
         $_SESSION['admin_username'] = $admin['username'];
-        $_SESSION['admin_role'] = $admin['role'];
+        $_SESSION['admin_name'] = $admin['ho_ten'] ?: $admin['username'];
+        $_SESSION['admin_role'] = normalize_admin_role($admin['role']);
 
-        header('Location: /admin/dashboard.php');
+        header('Location: ' . role_home($admin['role']));
         exit;
     } else {
         $error = 'Sai username hoặc password.';

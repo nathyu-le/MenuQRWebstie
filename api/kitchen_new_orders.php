@@ -16,7 +16,7 @@ function send_json(array $data): void
 }
 
 try {
-    require_admin_login();
+    require_roles(['owner', 'manager', 'kitchen']);
 
     $afterId = (int) ($_GET['after_id'] ?? 0);
 
@@ -40,7 +40,6 @@ try {
         SELECT 
             dh.id,
             dh.ma_don,
-            dh.tong_tien,
             dh.created_at,
             b.so_ban
         FROM don_hang dh
